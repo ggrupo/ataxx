@@ -1,5 +1,6 @@
 #Binaries are ignored
 *.class
+/bin/
 
 #Javadoc files
 /doc/

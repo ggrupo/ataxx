@@ -80,16 +80,8 @@ public class AtaxxMove extends GameMove {
 		}
 	}
 	
-	private short radius() {
-		if(Math.abs(dest_row - orig_row) > 2 || Math.abs(dest_col - orig_col) > 2) {
-			return 3;
-		} else if(Math.abs(dest_row - orig_row) == 2 || Math.abs(dest_col - orig_col) == 2) {
-			return 2;
-		} else if(Math.abs(dest_row - orig_row) == 1 || Math.abs(dest_col - orig_col) == 1) {
-			return 1;
-		} else {
-			return 0;
-		}
+	protected int radius() {
+		return Math.max(Math.abs(dest_row - orig_row), Math.abs(dest_col - orig_col));
 	}
 
 	@Override

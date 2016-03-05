@@ -5,12 +5,16 @@ import java.util.List;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.basecode.connectN.ConnectNMove;
 import es.ucm.fdi.tp.basecode.bgame.model.GameMove;
 
 
 public class AtaxxMove extends GameMove {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	protected int orig_row;
 	protected int orig_col;
 	
@@ -73,11 +77,24 @@ public class AtaxxMove extends GameMove {
 	
 	@Override
 	public void execute(Board board, List<Piece> pieces) {
+		int radius;
+		if (board.getPosition(orig_row, orig_col) == null) {
+			throw new GameError("position (" + orig_row + "," + orig_col + ") is empty!");
+		}
 		if (board.getPosition(dest_row, dest_col) == null) {
-			board.setPosition(dest_row, dest_col, getPiece());
-		} else {
 			throw new GameError("position (" + dest_row + "," + dest_col + ") is already occupied!");
 		}
+		radius = radius();	
+		if(2 == radius) {
+			board.setPosition(dest_row, dest_col, getPiece());
+			board.setPosition(orig_row, orig_col, null);
+		} else if(1 == radius) {
+			board.setPosition(dest_row, dest_col, getPiece());
+		} else {
+			throw new GameError("invalid move from (" + orig_row + "," + orig_col + ") to (" + dest_row + "," + dest_col + ")");
+		}
+		//TODO Convertir fichas adyacentes
+			
 	}
 	
 	protected int radius() {
@@ -86,16 +103,25 @@ public class AtaxxMove extends GameMove {
 
 	@Override
 	public GameMove fromString(Piece p, String str) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] words = str.split(" ");
+		if (words.length != 4) {
+			return null;
+		}
+
+		try {
+			int orig_row, orig_col, dest_row, dest_col;
+			orig_row = Integer.parseInt(words[0]);
+			orig_col = Integer.parseInt(words[1]);
+			dest_row = Integer.parseInt(words[2]);
+			dest_col = Integer.parseInt(words[3]);
+			return new AtaxxMove(orig_row, orig_col, dest_row, dest_col, p);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public String help() {
-		// TODO Auto-generated method stub
-		return null;
+		return "enter 'origin-row origin-column destination-row destination-column', to move a piece.";
 	}
-	
-	
-	
 }

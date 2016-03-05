@@ -77,19 +77,23 @@ public class AtaxxMove extends GameMove {
 	
 	@Override
 	public void execute(Board board, List<Piece> pieces) {
-		int radius;
+		int radius = 0;
+		Piece p = null;
+		
 		if (board.getPosition(orig_row, orig_col) == null) {
 			throw new GameError("position (" + orig_row + "," + orig_col + ") is empty!");
 		}
 		if (board.getPosition(dest_row, dest_col) == null) {
 			throw new GameError("position (" + dest_row + "," + dest_col + ") is already occupied!");
 		}
-		radius = radius();	
+		radius = radius();
+		p = getPiece();
 		if(2 == radius) {
-			board.setPosition(dest_row, dest_col, getPiece());
+			board.setPosition(dest_row, dest_col, p);
 			board.setPosition(orig_row, orig_col, null);
 		} else if(1 == radius) {
-			board.setPosition(dest_row, dest_col, getPiece());
+			board.setPosition(dest_row, dest_col, p);
+			board.setPieceCount(p,board.getPieceCount(p) + 1);
 		} else {
 			throw new GameError("invalid move from (" + orig_row + "," + orig_col + ") to (" + dest_row + "," + dest_col + ")");
 		}

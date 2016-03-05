@@ -35,20 +35,17 @@ public class AtaxxRules implements GameRules {
 
 	@Override
 	public Piece initialPlayer(Board board, List<Piece> pieces) {
-		// TODO Auto-generated method stub
-		return null;
+		return pieces.get(0);
 	}
 
 	@Override
 	public int minPlayers() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public int maxPlayers() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 4;
 	}
 
 	@Override
@@ -60,20 +57,18 @@ public class AtaxxRules implements GameRules {
 
 	@Override
 	public Piece nextPlayer(Board board, List<Piece> pieces, Piece turn) {
-		// TODO Auto-generated method stub
-		return null;
+		int i = pieces.indexOf(turn);
+		return pieces.get((i + 1) % pieces.size());
 	}
 
 	@Override
 	public double evaluate(Board board, List<Piece> pieces, Piece turn) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public List<GameMove> validMoves(Board board, List<Piece> playersPieces,
 			Piece turn) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

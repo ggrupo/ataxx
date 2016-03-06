@@ -103,7 +103,7 @@ public class AtaxxMove extends GameMove {
 	private void convertirArea(Board board) {
 		int minRow = Math.max(0, dest_row-1),
 		    maxRow = Math.min(board.getRows()-1, dest_row+1);
-		int minCol = Math.max(0, dest_col),
+		int minCol = Math.max(0, dest_col-1),
 		    maxCol = Math.min(board.getCols()-1, dest_col+1);
 		
 		Piece p = getPiece();

@@ -38,22 +38,26 @@ public class AtaxxRules implements GameRules {
 		
 		//Esquinas superior izquierda e inferior derecha	
 		p = iterator.next();
+		board.setPieceCount(p, 2);
 		board.setPosition(0, 0, p);
 		board.setPosition(dim-1, dim-1, p);
 		
 		//Esquina superior derecha e inferior izquierda	
 		p = iterator.next();
+		board.setPieceCount(p, 2);
 		board.setPosition(dim-1, 0, p);
 		board.setPosition(0, dim-1, p);
 			
 		if(iterator.hasNext()) {
 			p = iterator.next();
 			//Centro superior y centro inferior
+			board.setPieceCount(p, 2);
 			board.setPosition(0, dim/2, p);
 			board.setPosition(dim-1, dim/2, p);
 			if(iterator.hasNext()) {
 				p= iterator.next();
 				// Centro izquierda y centro derecha
+				board.setPieceCount(p, 2);
 				board.setPosition(dim/2, 0, p);
 				board.setPosition(dim/2, dim-1, p);
 			}

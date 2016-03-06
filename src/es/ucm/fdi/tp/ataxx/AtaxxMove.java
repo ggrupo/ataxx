@@ -105,15 +105,15 @@ public class AtaxxMove extends GameMove {
 
 	private void convertirArea(Board board) {
 		int minRow = Math.max(0, dest_row-1),
-		    maxRow = Math.min(board.getRows()-1, dest_row+1);
+		    maxRow = Math.min(board.getRows(), dest_row+1);
 		int minCol = Math.max(0, dest_col-1),
-		    maxCol = Math.min(board.getCols()-1, dest_col+1);
+		    maxCol = Math.min(board.getCols(), dest_col+1);
 		
 		Piece p = getPiece();
 		Piece q = null;
 		
-		for(int i = minRow; i<maxRow; i++){
-			for(int j = minCol; j<maxCol; j++){
+		for(int i = minRow; i<=maxRow; i++){
+			for(int j = minCol; j<=maxCol; j++){
 				q = board.getPosition(i,j);
 				if(null != q) {
 					board.setPieceCount(q, board.getPieceCount(q) - 1);

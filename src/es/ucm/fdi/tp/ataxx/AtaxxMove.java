@@ -67,7 +67,7 @@ public class AtaxxMove extends GameMove {
 	 *            <p>
 	 *            Ficha a colocar en ({@code dest_row},{@code dest_col}).
 	 */
-	public AtaxxMove(int orig_col, int orig_row, int dest_row, int dest_col, Piece p) {
+	public AtaxxMove(int orig_row, int orig_col, int dest_row, int dest_col, Piece p) {
 		super(p);
 		this.dest_row = dest_row;
 		this.dest_col = dest_col;

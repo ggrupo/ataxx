@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp.ataxx;
 
+import java.util.Iterator;
 import java.util.List;
 
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
@@ -30,7 +31,35 @@ public class AtaxxRules implements GameRules {
 
 	@Override
 	public Board createBoard(List<Piece> pieces) {
-		return new FiniteRectBoard(dim, dim);
+		FiniteRectBoard board = new FiniteRectBoard(dim, dim);
+		
+		Piece p = null;
+		Iterator<Piece> iterator = pieces.iterator();
+		
+		//Esquinas superior izquierda e inferior derecha	
+		p = iterator.next();
+		board.setPosition(0, 0, p);
+		board.setPosition(dim-1, dim-1, p);
+		
+		//Esquina superior derecha e inferior izquierda	
+		p = iterator.next();
+		board.setPosition(dim-1, 0, p);
+		board.setPosition(0, dim-1, p);
+			
+		if(iterator.hasNext()) {
+			p = iterator.next();
+			//Centro superior y centro inferior
+			board.setPosition(0, dim/2, p);
+			board.setPosition(dim-1, dim/2, p);
+			if(iterator.hasNext()) {
+				p= iterator.next();
+				// Centro izquierda y centro derecha
+				board.setPosition(dim/2, 0, p);
+				board.setPosition(dim/2, dim-1, p);
+			}
+		}
+		
+		return board;
 	}
 
 	@Override

@@ -83,7 +83,7 @@ public class AtaxxMove extends GameMove {
 		if (board.getPosition(orig_row, orig_col) == null) {
 			throw new GameError("position (" + orig_row + "," + orig_col + ") is empty!");
 		}
-		if (board.getPosition(dest_row, dest_col) == null) {
+		if (board.getPosition(dest_row, dest_col) != null) {
 			throw new GameError("position (" + dest_row + "," + dest_col + ") is already occupied!");
 		}
 		radius = radius();

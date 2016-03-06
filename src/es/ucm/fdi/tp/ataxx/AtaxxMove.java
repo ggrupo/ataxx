@@ -97,8 +97,28 @@ public class AtaxxMove extends GameMove {
 		} else {
 			throw new GameError("invalid move from (" + orig_row + "," + orig_col + ") to (" + dest_row + "," + dest_col + ")");
 		}
-		//TODO Convertir fichas adyacentes
-			
+		convertirArea(board);
+	}
+
+	private void convertirArea(Board board) {
+		int minRow = Math.max(0, dest_row-1),
+		    maxRow = Math.min(board.getRows()-1, dest_row+1);
+		int minCol = Math.max(0, dest_col),
+		    maxCol = Math.min(board.getCols()-1, dest_col+1);
+		
+		Piece p = getPiece();
+		Piece q = null;
+		
+		for(int i = minRow; i<maxRow; i++){
+			for(int j = minCol; j<maxCol; j++){
+				q = board.getPosition(i,j);
+				if(null != q) {
+					board.setPieceCount(q, board.getPieceCount(q) - 1);
+					board.setPieceCount(p, board.getPieceCount(p) + 1);
+					board.setPosition(i, j, p);
+				}
+			}
+		}
 	}
 	
 	protected int radius() {

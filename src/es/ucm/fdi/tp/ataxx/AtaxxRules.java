@@ -51,8 +51,35 @@ public class AtaxxRules implements GameRules {
 	@Override
 	public Pair<State, Piece> updateState(Board board, List<Piece> pieces,
 			Piece turn) {
-		// TODO Auto-generated method stub
-		return null;
+			int zeroes = 0;
+			Piece winner = null;
+			int nPiezas, maxPiezas = 0;
+			boolean empate = false;
+			
+			for(Piece p : pieces) {
+				nPiezas=board.getPieceCount(p);
+				if(0 == nPiezas) {
+					zeroes++;
+				} else if(nPiezas > maxPiezas) {
+					winner = p;
+					maxPiezas = nPiezas;
+					empate = false;
+				} else if(nPiezas == maxPiezas) {
+					empate = true;
+				}
+				
+			}
+			if(zeroes == pieces.size() - 1) {
+				return new Pair<State,Piece>(State.Won,winner);
+			}
+			if(board.isFull()) {
+				if(empate) {
+					return new Pair<State,Piece>(State.Draw, null);
+				}
+				return new Pair<State,Piece>(State.Won, winner);
+			}
+			
+			return new Pair<State, Piece>(State.InPlay, null);
 	}
 
 	@Override

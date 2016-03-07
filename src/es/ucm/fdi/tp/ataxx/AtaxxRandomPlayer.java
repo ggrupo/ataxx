@@ -56,7 +56,7 @@ public class AtaxxRandomPlayer extends Player {
 
 	}
 
-	private Pair<Integer,Integer> surroundings(Board board, int row, int col, Piece p) {
+	private static Pair<Integer,Integer> surroundings(Board board, int row, int col, Piece p) {
 		int minRow = Math.max(0, row-2),
 		    maxRow = Math.min(board.getRows()-1, row+2);
 		int minCol = Math.max(0, col-2),

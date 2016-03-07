@@ -2,6 +2,7 @@ package es.ucm.fdi.tp.ataxx;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import es.ucm.fdi.tp.basecode.bgame.Utils;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
@@ -159,7 +160,36 @@ public class AtaxxRules implements GameRules {
 	@Override
 	public List<GameMove> validMoves(Board board, List<Piece> playersPieces,
 			Piece turn) {
-		return null;
+		List<GameMove> moves = new ArrayList<GameMove>();
+		
+		for(int i = 0; i<dim; i++) {
+			for(int j = 0; j<dim; j++) {
+				if(board.getPosition(i,j) == null)
+					moves.addAll(surroundings(board,i,j));
+			}
+		}
+		
+		return moves;
+	}
+	
+	private static List<GameMove> surroundings(Board board, int row, int col) {
+		List<GameMove> moves = new ArrayList<GameMove>();
+		Piece p = null;
+		
+		int minRow = Math.max(0, row-2),
+		    maxRow = Math.min(board.getRows()-1, row+2);
+		int minCol = Math.max(0, col-2),
+		    maxCol = Math.min(board.getCols()-1, col+2);
+		
+		for(int i = minRow; i<maxRow; i++){
+			for(int j = minCol; j<maxCol; j++){
+				p = board.getPosition(i,j);
+				if(p != null && !obs.equals(p)) {
+					moves.add(new AtaxxMove(i,j,row,col, p));
+				}
+			}
+		}
+		return moves;
 	}
 
 }

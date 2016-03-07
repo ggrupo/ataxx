@@ -229,6 +229,17 @@ public class Main {
 	 * 
 	 */
 	private static Integer dimCols;
+	
+	/**
+	 * Number of obstacles provided with the option -o ({@code null} if not
+	 * provided).
+	 * 
+	 * <p>
+	 * Numero de obst�culos proporcionados con la opcion -o, o {@code null} si no
+	 * se incluye la opcion.
+	 * 
+	 */
+	private static Integer nObstacles;
 
 	/**
 	 * The algorithm to be used by the automatic player. Not used so far, it is
@@ -270,6 +281,8 @@ public class Main {
 																// --multiviews
 		cmdLineOptions.addOption(constructPlayersOption()); // -p or --players
 		cmdLineOptions.addOption(constructDimensionOption()); // -d or --dim
+		
+		cmdLineOptions.addOption(constructObstaclesOption()); // -o or --obstacles
 
 		// parse the command line as provided in args
 		//
@@ -278,10 +291,12 @@ public class Main {
 			CommandLine line = parser.parse(cmdLineOptions, args);
 			parseHelpOption(line, cmdLineOptions);
 			parseDimOptionn(line);
+			parseObstaclesOption(line);
 			parseGameOption(line);
 			parseViewOption(line);
 			parseMultiViewOption(line);
 			parsePlayersOptions(line);
+			
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -471,7 +486,6 @@ public class Main {
 	 *         <p>
 	 *         Objeto {@link Option} de esta opcion.
 	 */
-
 	private static Option constructGameOption() {
 		String optionInfo = "The game to play ( ";
 		for (GameInfo i : GameInfo.values()) {
@@ -507,6 +521,8 @@ public class Main {
 	private static void parseGameOption(CommandLine line) throws ParseException {
 		String gameVal = line.getOptionValue("g", DEFAULT_GAME.getId());
 		GameInfo selectedGame = null;
+		
+		Integer nObs = 0;
 
 		for( GameInfo g : GameInfo.values() ) {
 			if ( g.getId().equals(gameVal) ) {
@@ -534,14 +550,65 @@ public class Main {
 			gameFactory = new TicTacToeFactory();
 			break;
 		case Ataxx:
-			gameFactory = new AtaxxFactory();
+			if(null != nObstacles) {
+				nObs = nObstacles;
+			}
+			if (dimRows != null && dimCols != null && dimRows == dimCols) {
+				gameFactory = new AtaxxFactory(dimRows, nObs);
+			} else {
+				gameFactory = new AtaxxFactory(5, nObs);
+			}
+			
 			break;
 		default:
 			throw new UnsupportedOperationException("Something went wrong! This program point should be unreachable!");
 		}
 	
 	}
-
+	
+	/**
+	 * Builds the obstacles (-o or --obstacles) CLI option.
+	 * 
+	 * <p>
+	 * Construye la opcion CLI -o.
+	 * 
+	 * @return CLI {@link {@link Option} for the obstacles.
+	 *         <p>
+	 *         Objeto {@link Option} de esta opcion.
+	 */
+	private static Option constructObstaclesOption() {
+		return new Option("o", "obstacles", true,
+				"The number of obstacles (if allowed by the selected game).");
+	}
+	
+	/**
+	 * Parses the obstacles option (-o or --obstacles). It sets the value of
+	 * {@link #nObstacles} accordingly.
+	 * 
+	 * <p>
+	 * Extrae la opcion obstaculos (-o). Asigna el valor del atributo
+	 * {@link #nObstacles}.
+	 * 
+	 * @param line
+	 *            CLI {@link CommandLine} object.
+	 * @throws ParseException
+	 *             If an invalid value is provided.
+	 *             <p>
+	 *             Si se proporciona un valor invalido.
+	 */
+	private static void parseObstaclesOption(CommandLine line) throws ParseException {
+		String obsVal = line.getOptionValue("o");
+		if (obsVal != null) {
+			try {
+			nObstacles = Integer.parseInt(obsVal);
+			} catch (NumberFormatException e) {
+				nObstacles = null;
+				throw new ParseException("Invalid number of obstacles: " + obsVal);
+			}
+		}
+	
+	}
+	
 	/**
 	 * Builds the dimension (-d or --dim) CLI option.
 	 * 

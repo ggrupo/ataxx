@@ -31,24 +31,33 @@ import es.ucm.fdi.tp.basecode.bgame.views.GenericConsoleView;
 public class AtaxxFactory implements GameFactory {
 
 	private int dim;
+	private int obstacles;
 
 	public AtaxxFactory() {
-		this(5);
+		this(5,0);
+	}
+	
+	public AtaxxFactory(int dim) {
+		this(dim,0);
 	}
 
-	public AtaxxFactory(int dim) {
+	public AtaxxFactory(int dim, int obstacles) {
+		if(obstacles >= dim*dim) {
+			throw new GameError("So many obstacles: " + obstacles);
+		}
 		if (dim < 5) {
 			throw new GameError("Dimension must be at least 5: " + dim);
 		} else if(dim % 2 == 0) {
 			throw new GameError("Dimension must be odd: " + dim);
 		} else {
 			this.dim = dim;
+			this.obstacles = Math.max(0, obstacles);
 		}
 	}
 
 	@Override
 	public GameRules gameRules() {
-		return new AtaxxRules(dim);
+		return new AtaxxRules(dim, obstacles);
 	}
 
 	@Override

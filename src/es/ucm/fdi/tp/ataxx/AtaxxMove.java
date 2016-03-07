@@ -100,10 +100,10 @@ public class AtaxxMove extends GameMove {
 		} else {
 			throw new GameError("invalid move from (" + orig_row + "," + orig_col + ") to (" + dest_row + "," + dest_col + ")");
 		}
-		convertirArea(board);
+		convertirArea(board, pieces);
 	}
 
-	private void convertirArea(Board board) {
+	private void convertirArea(Board board, List<Piece> pieces) {
 		int minRow = Math.max(0, dest_row-1),
 		    maxRow = Math.min(board.getRows()-1, dest_row+1);
 		int minCol = Math.max(0, dest_col-1),
@@ -115,7 +115,7 @@ public class AtaxxMove extends GameMove {
 		for(int i = minRow; i<=maxRow; i++){
 			for(int j = minCol; j<=maxCol; j++){
 				q = board.getPosition(i,j);
-				if(null != q) {
+				if(null != q && pieces.contains(q)) {
 					board.setPieceCount(q, board.getPieceCount(q) - 1);
 					board.setPieceCount(p, board.getPieceCount(p) + 1);
 					board.setPosition(i, j, p);

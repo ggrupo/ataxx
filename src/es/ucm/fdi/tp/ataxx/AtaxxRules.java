@@ -3,6 +3,7 @@ package es.ucm.fdi.tp.ataxx;
 import java.util.Iterator;
 import java.util.List;
 
+import es.ucm.fdi.tp.basecode.bgame.Utils;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.FiniteRectBoard;
@@ -15,12 +16,19 @@ import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 public class AtaxxRules implements GameRules {
 	
 	private int dim;
+	private int obstacles;
 	
-	public AtaxxRules(int dim) {
+	private static final Piece obs = new Piece("*");
+	
+	public AtaxxRules(int dim, int obstacles) {
+		if(obstacles >= dim*dim) {
+			throw new GameError("So many obstacles: " + obstacles);
+		}
 		if (dim < 5) {
 			throw new GameError("Dimension must be at least 5: " + dim);
 		} else {
 			this.dim = dim;
+			this.obstacles = Math.max(0, obstacles);
 		}
 	}
 	
@@ -62,10 +70,32 @@ public class AtaxxRules implements GameRules {
 				board.setPosition(dim/2, dim-1, p);
 			}
 		}
+		constructObstacles(board, false, pieces);
 		
 		return board;
 	}
-
+	
+	protected void constructObstacles(Board board, boolean simetrico, List<Piece> pieces) {
+		if(obstacles >= (dim*dim - pieces.size() * 2)) {
+			throw new GameError("So many obstacles: " + obstacles);
+		}
+		
+		if(simetrico) {
+			//TODO - Simetrico
+		} else {
+			int i = 0;
+			int randRow, randCol;
+			while(i<obstacles) {
+				randRow = Utils.randomInt(dim);
+				randCol = Utils.randomInt(dim);
+				if(board.getPosition(randRow, randCol) == null) {
+					board.setPosition(randRow, randCol, obs);
+					i++;
+				}
+			}
+		}
+	}
+	
 	@Override
 	public Piece initialPlayer(Board board, List<Piece> pieces) {
 		return pieces.get(0);

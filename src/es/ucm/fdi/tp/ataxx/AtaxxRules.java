@@ -76,17 +76,13 @@ public class AtaxxRules implements GameRules {
 		return board;
 	}
 	
-	protected void constructObstacles(Board board, boolean simetrico, List<Piece> pieces) {
-		if(obstacles >= (dim*dim - pieces.size() * 2)) {
-			throw new GameError("So many obstacles: " + obstacles);
-		}
-		
+	protected void constructObstacles(Board board, boolean simetrico, List<Piece> pieces) {		
 		if(simetrico) {
 			//TODO - Simetrico
 		} else {
 			int i = 0;
 			int randRow, randCol;
-			while(i<obstacles) {
+			while(i<obstacles && !board.isFull()) {
 				randRow = Utils.randomInt(dim);
 				randCol = Utils.randomInt(dim);
 				if(board.getPosition(randRow, randCol) == null) {
@@ -149,7 +145,12 @@ public class AtaxxRules implements GameRules {
 	@Override
 	public Piece nextPlayer(Board board, List<Piece> pieces, Piece turn) {
 		int i = pieces.indexOf(turn);
-		return pieces.get((i + 1) % pieces.size());
+		Piece p;
+		do {
+			p = pieces.get((i + 1) % pieces.size());
+			i++;
+		} while(board.getPieceCount(p) <= 0);
+		return p;
 	}
 
 	@Override

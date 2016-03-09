@@ -43,9 +43,9 @@ public class AtaxxRandomPlayer extends Player {
 		// start at (currRow,currColl) and look for the first empty position.
 		while (true) {
 			if (board.getPosition(currRow, currCol) == null) {
-				pos = surroundings(board, rows, cols, p);
+				pos = surroundings(board, currRow, currCol, p);
 				if(pos != null) {
-					return new AtaxxMove(pos.getFirst(), pos.getSecond(), rows, cols, p);
+					return new AtaxxMove(pos.getFirst(), pos.getSecond(), currRow, currCol, p);
 				}
 			}
 			currCol = (currCol + 1) % cols;
@@ -63,8 +63,8 @@ public class AtaxxRandomPlayer extends Player {
 		    maxCol = Math.min(board.getCols()-1, col+2);
 		
 		
-		for(int i = minRow; i<maxRow; i++){
-			for(int j = minCol; j<maxCol; j++){
+		for(int i = minRow; i<=maxRow; i++){
+			for(int j = minCol; j<=maxCol; j++){
 				if(p.equals(board.getPosition(i,j))) {
 					return new Pair<Integer,Integer>(i,j);
 				}

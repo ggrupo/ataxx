@@ -132,7 +132,7 @@ public class AtaxxRules implements GameRules {
 			if(zeroes == pieces.size() - 1) {
 				return new Pair<State,Piece>(State.Won,winner);
 			}
-			if(nextPlayer(board, pieces, turn) == null)) {
+			if(nextPlayer(board, pieces, turn) == null) {
 				if(empate) {
 					return new Pair<State,Piece>(State.Draw, null);
 				}

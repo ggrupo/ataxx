@@ -150,7 +150,7 @@ public class AtaxxRules implements GameRules {
 		do {
 			p = pieces.get(i % pieces.size());
 			i++; c--;
-		} while( c>= 0 && (board.getPieceCount(p) <= 0 || validMoves(board, pieces, p) == null));
+		} while( c > 0 && (board.getPieceCount(p) <= 0 || validMoves(board, pieces, p) == null));
 		
 		if(0 == c)
 			return null;

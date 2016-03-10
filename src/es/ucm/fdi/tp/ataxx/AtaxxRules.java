@@ -114,11 +114,12 @@ public class AtaxxRules implements GameRules {
 			Piece winner = null;
 			int nPiezas, maxPiezas = 0;
 			boolean empate = false;
+			List<Piece> zeros = new ArrayList<Piece>();
 			
 			for(Piece p : pieces) {
 				nPiezas=board.getPieceCount(p);
 				if(0 == nPiezas) {
-					pieces.remove(p);
+					zeros.add(p);
 				} else if(nPiezas > maxPiezas) {
 					winner = p;
 					maxPiezas = nPiezas;
@@ -126,6 +127,9 @@ public class AtaxxRules implements GameRules {
 				} else if(nPiezas == maxPiezas) {
 					empate = true;
 				}
+			}
+			for(Piece z: zeros) {
+				pieces.remove(z);
 			}
 			
 			if(1 == pieces.size()) {
@@ -145,7 +149,7 @@ public class AtaxxRules implements GameRules {
 	public Piece nextPlayer(Board board, List<Piece> pieces, Piece turn) {
 		int i = pieces.indexOf(turn) + 1;
 		Piece p;
-		int c = pieces.size();
+		int c = pieces.size() + 1;
 		do {
 			p = pieces.get(i % pieces.size());
 			i++; c--;

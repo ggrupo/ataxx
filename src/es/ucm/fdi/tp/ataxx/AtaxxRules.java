@@ -188,8 +188,8 @@ public class AtaxxRules implements GameRules {
 		int minCol = Math.max(0, col-2),
 		    maxCol = Math.min(board.getCols()-1, col+2);
 		
-		for(int i = minRow; i<maxRow; i++){
-			for(int j = minCol; j<maxCol; j++){
+		for(int i = minRow; i<=maxRow; i++){
+			for(int j = minCol; j<=maxCol; j++){
 				p = board.getPosition(i,j);
 				if(turn.equals(p)) {
 					moves.add(new AtaxxMove(i, j, row, col, turn));

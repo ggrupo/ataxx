@@ -31,45 +31,11 @@ public class AtaxxRandomPlayer extends Player {
 			throw new GameError("The board is full, cannot make a random move!!");
 		}
 
-		int rows = board.getRows();
-		int cols = board.getCols();
-
-		// pick an initial random position
-		int currRow = Utils.randomInt(rows);
-		int currCol = Utils.randomInt(cols);
-		
-		Pair<Integer,Integer> pos = null;
-		
-		// start at (currRow,currColl) and look for the first empty position.
-		while (true) {
-			if (board.getPosition(currRow, currCol) == null) {
-				pos = surroundings(board, currRow, currCol, p);
-				if(pos != null) {
-					return new AtaxxMove(pos.getFirst(), pos.getSecond(), currRow, currCol, p);
-				}
-			}
-			currCol = (currCol + 1) % cols;
-			if (currCol == 0) {
-				currRow = (currRow + 1) % rows;
-			}
+		List<GameMove> moves = rules.validMoves(board, pieces, p);
+		if(null == moves || moves.isEmpty()) {
+			throw new GameError("Piece " + p.getId() + " cannot make any move!");
 		}
-
-	}
-
-	private static Pair<Integer,Integer> surroundings(Board board, int row, int col, Piece p) {
-		int minRow = Math.max(0, row-2),
-		    maxRow = Math.min(board.getRows()-1, row+2);
-		int minCol = Math.max(0, col-2),
-		    maxCol = Math.min(board.getCols()-1, col+2);
-		
-		
-		for(int i = minRow; i<=maxRow; i++){
-			for(int j = minCol; j<=maxCol; j++){
-				if(p.equals(board.getPosition(i,j))) {
-					return new Pair<Integer,Integer>(i,j);
-				}
-			}
-		}
-		return null;
+		Integer random = Utils.randomInt(moves.size());
+		return moves.get(random);
 	}
 }

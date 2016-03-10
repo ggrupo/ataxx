@@ -111,7 +111,6 @@ public class AtaxxRules implements GameRules {
 	@Override
 	public Pair<State, Piece> updateState(Board board, List<Piece> pieces,
 			Piece turn) {
-			int zeroes = 0;
 			Piece winner = null;
 			int nPiezas, maxPiezas = 0;
 			boolean empate = false;
@@ -119,7 +118,7 @@ public class AtaxxRules implements GameRules {
 			for(Piece p : pieces) {
 				nPiezas=board.getPieceCount(p);
 				if(0 == nPiezas) {
-					zeroes++;
+					pieces.remove(p);
 				} else if(nPiezas > maxPiezas) {
 					winner = p;
 					maxPiezas = nPiezas;
@@ -129,7 +128,7 @@ public class AtaxxRules implements GameRules {
 				}
 			}
 			
-			if(zeroes == pieces.size() - 1) {
+			if(1 == pieces.size()) {
 				return new Pair<State,Piece>(State.Won,winner);
 			}
 			if(nextPlayer(board, pieces, turn) == null) {

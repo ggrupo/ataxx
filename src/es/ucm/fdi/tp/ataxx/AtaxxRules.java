@@ -127,12 +127,12 @@ public class AtaxxRules implements GameRules {
 				} else if(nPiezas == maxPiezas) {
 					empate = true;
 				}
-				
 			}
+			
 			if(zeroes == pieces.size() - 1) {
 				return new Pair<State,Piece>(State.Won,winner);
 			}
-			if(board.isFull()) {
+			if(nextPlayer(board, pieces, turn) == null)) {
 				if(empate) {
 					return new Pair<State,Piece>(State.Draw, null);
 				}
@@ -144,12 +144,16 @@ public class AtaxxRules implements GameRules {
 
 	@Override
 	public Piece nextPlayer(Board board, List<Piece> pieces, Piece turn) {
-		int i = pieces.indexOf(turn);
+		int i = pieces.indexOf(turn) + 1;
 		Piece p;
+		int c = pieces.size();
 		do {
-			p = pieces.get((i + 1) % pieces.size());
-			i++;
-		} while(board.getPieceCount(p) <= 0);
+			p = pieces.get(i % pieces.size());
+			i++; c--;
+		} while( c>= 0 && (board.getPieceCount(p) <= 0 || validMoves(board, pieces, p) == null));
+		
+		if(0 == c)
+			return null;
 		return p;
 	}
 
@@ -166,14 +170,16 @@ public class AtaxxRules implements GameRules {
 		for(int i = 0; i<dim; i++) {
 			for(int j = 0; j<dim; j++) {
 				if(board.getPosition(i,j) == null)
-					moves.addAll(surroundings(board,i,j));
+					moves.addAll(surroundings(board,i,j,turn));
 			}
 		}
-		
+		if(moves.isEmpty()){
+			return null;
+		}
 		return moves;
 	}
 	
-	private static List<GameMove> surroundings(Board board, int row, int col) {
+	private static List<GameMove> surroundings(Board board, int row, int col, Piece turn) {
 		List<GameMove> moves = new ArrayList<GameMove>();
 		Piece p = null;
 		
@@ -185,8 +191,8 @@ public class AtaxxRules implements GameRules {
 		for(int i = minRow; i<maxRow; i++){
 			for(int j = minCol; j<maxCol; j++){
 				p = board.getPosition(i,j);
-				if(p != null && !obs.equals(p)) {
-					moves.add(new AtaxxMove(i,j,row,col, p));
+				if(turn.equals(p)) {
+					moves.add(new AtaxxMove(i, j, row, col, turn));
 				}
 			}
 		}

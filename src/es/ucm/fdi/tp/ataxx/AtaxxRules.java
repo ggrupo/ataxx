@@ -104,25 +104,28 @@ public class AtaxxRules implements GameRules {
 	 * @param board The board where obstacles will be placed.
 	 * @param simetrico (Optional) Indicates if obstacles are being placed simmetrically.
 	 */
-	protected void constructObstacles(Board board, boolean simetrico) {		
+	protected void constructObstacles(Board board, boolean simetrico) {
+		int i = 0;
+		int randRow, randCol;
 		if(simetrico) {
-			int i = 0;
-			int randRow, randCol;
-			while(i<obstacles && !board.isFull()) {
+			//Capacidad de un cuadrante (sin fila-columna central)
+			int maxCapacity = (int) (dim/2) * (int) (dim/2) - 1;
+			while(i<obstacles && i < maxCapacity) {
 				randRow = Utils.randomInt(dim/2);
 				randCol = Utils.randomInt(dim/2);
 				if(board.getPosition(randRow, randCol) == null) {
+					//Segundo cuadrante
 					board.setPosition(randRow, randCol, OBSTACLE);
+					//Cuarto cuadrante
 					board.setPosition(dim-randRow-1, dim-randCol-1, OBSTACLE);
+					//Primer cuadrante
 					board.setPosition(randRow, dim-randCol-1, OBSTACLE);
+					//Tercer cuadrante
 					board.setPosition(dim-randRow-1, randCol, OBSTACLE);
 					i++;
 				}
 			}
-			//TODO - Simetrico
 		} else {
-			int i = 0;
-			int randRow, randCol;
 			while(i<obstacles && !board.isFull()) {
 				randRow = Utils.randomInt(dim);
 				randCol = Utils.randomInt(dim);

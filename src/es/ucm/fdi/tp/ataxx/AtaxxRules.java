@@ -71,13 +71,26 @@ public class AtaxxRules implements GameRules {
 				board.setPosition(dim/2, dim-1, p);
 			}
 		}
-		constructObstacles(board, false, pieces);
+		constructObstacles(board, true, pieces);
 		
 		return board;
 	}
 	
 	protected void constructObstacles(Board board, boolean simetrico, List<Piece> pieces) {		
 		if(simetrico) {
+			int i = 0;
+			int randRow, randCol;
+			while(i<obstacles && !board.isFull()) {
+				randRow = Utils.randomInt(dim/2);
+				randCol = Utils.randomInt(dim/2);
+				if(board.getPosition(randRow, randCol) == null) {
+					board.setPosition(randRow, randCol, obs);
+					board.setPosition(dim-randRow-1, dim-randCol-1, obs);
+					board.setPosition(randRow, dim-randCol-1, obs);
+					board.setPosition(dim-randRow-1, randCol, obs);
+					i++;
+				}
+			}
 			//TODO - Simetrico
 		} else {
 			int i = 0;

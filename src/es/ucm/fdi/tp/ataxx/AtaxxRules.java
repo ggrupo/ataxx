@@ -45,7 +45,7 @@ public class AtaxxRules implements GameRules {
 	private static final Piece OBSTACLE = new Piece("*");
 	
 	public AtaxxRules(int dim, int obstacles) {
-		if(obstacles >= dim*dim) {
+		if(obstacles >= (dim * dim * .8) ) {
 			throw new GameError("So many obstacles: " + obstacles);
 		}
 		if (dim < 5) {
@@ -145,9 +145,12 @@ public class AtaxxRules implements GameRules {
 		constructObstacles(board, false);
 	}
 	
+	/**
+	 * Returns the first player who can move.
+	 */
 	@Override
 	public Piece initialPlayer(Board board, List<Piece> pieces) {
-		return pieces.get(0);
+		return  nextPlayer(board, pieces, null);
 	}
 
 	@Override

@@ -102,7 +102,12 @@ public class AtaxxMove extends GameMove {
 		}
 		convertirArea(board, pieces);
 	}
-
+	
+	/**
+	 * Converts surrounding pieces to the moved one.
+	 * @param board Game board.
+	 * @param pieces List of pieces in the game.
+	 */
 	private void convertirArea(Board board, List<Piece> pieces) {
 		int minRow = Math.max(0, dest_row-1),
 		    maxRow = Math.min(board.getRows()-1, dest_row+1);
@@ -124,6 +129,10 @@ public class AtaxxMove extends GameMove {
 		}
 	}
 	
+	/**
+	 * Calculates the redius of the move.
+	 * @return Number representing integer radius.
+	 */
 	protected int radius() {
 		return Math.max(Math.abs(dest_row - orig_row), Math.abs(dest_col - orig_col));
 	}

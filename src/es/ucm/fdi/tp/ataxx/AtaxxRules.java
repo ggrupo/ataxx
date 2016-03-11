@@ -14,12 +14,35 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameRules;
 import es.ucm.fdi.tp.basecode.bgame.model.Pair;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
+/**
+ * Rules for Ataxx game.
+ * <ul>
+ * <li>The game is played on an NxN board (with N>=5 and N an odd number).</li>
+ * <li>The number of players is between 2 and 4.</li>
+ * <li>The player turn in the given order, each moving a piece to an empty
+ * cell. The winner is the one who has more pieces when no piece can be moved.</li>
+ * </ul>
+ * 
+ * <p>
+ * Reglas del juego Ataxx.
+ * <ul>
+ * <li>El juego se juega en un tablero NxN (con N>=5 y N impar).</li>
+ * <li>El numero de jugadores esta entre 2 y 4.</li>
+ * <li>Los jugadores juegan en el orden proporcionado, cada uno moviendo una
+ * ficha a una casilla vacia. El ganador es el que Tenga mas fichas cuando nadie
+ * se pueda mover.</li>
+ * </ul>
+ *
+ */
 public class AtaxxRules implements GameRules {
 	
 	private int dim;
 	private int obstacles;
 	
-	private static final Piece obs = new Piece("*");
+	/**
+	 * The default obstacle piece.
+	 */
+	private static final Piece OBSTACLE = new Piece("*");
 	
 	public AtaxxRules(int dim, int obstacles) {
 		if(obstacles >= dim*dim) {
@@ -45,7 +68,7 @@ public class AtaxxRules implements GameRules {
 		Piece p = null;
 		Iterator<Piece> iterator = pieces.iterator();
 		
-		//Esquinas superior izquierda e inferior derecha	
+		//Esquinas superior izquierda e inferior derecha
 		p = iterator.next();
 		board.setPieceCount(p, 2);
 		board.setPosition(0, 0, p);
@@ -64,19 +87,24 @@ public class AtaxxRules implements GameRules {
 			board.setPosition(0, dim/2, p);
 			board.setPosition(dim-1, dim/2, p);
 			if(iterator.hasNext()) {
-				p= iterator.next();
+				p = iterator.next();
 				// Centro izquierda y centro derecha
 				board.setPieceCount(p, 2);
 				board.setPosition(dim/2, 0, p);
 				board.setPosition(dim/2, dim-1, p);
 			}
 		}
-		constructObstacles(board, true, pieces);
+		constructObstacles(board, true);
 		
 		return board;
 	}
 	
-	protected void constructObstacles(Board board, boolean simetrico, List<Piece> pieces) {		
+	/**
+	 * Inserts random obstacles within the board.
+	 * @param board The board where obstacles will be placed.
+	 * @param simetrico (Optional) Indicates if obstacles are being placed simmetrically.
+	 */
+	protected void constructObstacles(Board board, boolean simetrico) {		
 		if(simetrico) {
 			int i = 0;
 			int randRow, randCol;
@@ -84,10 +112,10 @@ public class AtaxxRules implements GameRules {
 				randRow = Utils.randomInt(dim/2);
 				randCol = Utils.randomInt(dim/2);
 				if(board.getPosition(randRow, randCol) == null) {
-					board.setPosition(randRow, randCol, obs);
-					board.setPosition(dim-randRow-1, dim-randCol-1, obs);
-					board.setPosition(randRow, dim-randCol-1, obs);
-					board.setPosition(dim-randRow-1, randCol, obs);
+					board.setPosition(randRow, randCol, OBSTACLE);
+					board.setPosition(dim-randRow-1, dim-randCol-1, OBSTACLE);
+					board.setPosition(randRow, dim-randCol-1, OBSTACLE);
+					board.setPosition(dim-randRow-1, randCol, OBSTACLE);
 					i++;
 				}
 			}
@@ -99,11 +127,19 @@ public class AtaxxRules implements GameRules {
 				randRow = Utils.randomInt(dim);
 				randCol = Utils.randomInt(dim);
 				if(board.getPosition(randRow, randCol) == null) {
-					board.setPosition(randRow, randCol, obs);
+					board.setPosition(randRow, randCol, OBSTACLE);
 					i++;
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Inserts random obstacles within the board.
+	 * @param board The board where obstacles will be placed.
+	 */
+	protected void constructObstacles(Board board) {
+		constructObstacles(board, false);
 	}
 	
 	@Override
@@ -195,6 +231,15 @@ public class AtaxxRules implements GameRules {
 		return moves;
 	}
 	
+	/**
+	 * Returns a list of valid moves from where you can move to an empty 
+	 * position for a given piece.
+	 * @param board The board
+	 * @param row Row empty dest
+	 * @param col Column empty dest
+	 * @param turn Piece to search for.
+	 * @return
+	 */
 	private static List<GameMove> surroundings(Board board, int row, int col, Piece turn) {
 		List<GameMove> moves = new ArrayList<GameMove>();
 		Piece p = null;

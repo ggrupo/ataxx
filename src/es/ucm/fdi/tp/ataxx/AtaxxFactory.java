@@ -20,12 +20,12 @@ import es.ucm.fdi.tp.basecode.bgame.views.GenericConsoleView;
 
 
 /**
- * A factory for creating ataxx games. See {@link ConnectNRules} for the
+ * A factory for creating ataxx games. See {@link AtaxxRules} for the
  * description of the game.
  * 
  * 
  * <p>
- * Factoria para la creacion de juegos Ataxx. Vease {@link ConnectNRules}
+ * Factoria para la creacion de juegos Ataxx. Vease {@link AtaxxRules}
  * para la descripcion del juego.
  */
 public class AtaxxFactory implements GameFactory {

@@ -1,5 +1,7 @@
 package es.ucm.fdi.tp.views.swing;
 
+import javax.swing.border.TitledBorder;
+
 public class MessagesBox extends ScrollableTextarea {
 
 	private static final long serialVersionUID = 768586332299945974L;
@@ -27,6 +29,7 @@ public class MessagesBox extends ScrollableTextarea {
 		super.formatTextArea();
 		this.textarea.setEditable(false);
 		this.textarea.setHighlighter(null);
+		this.setBorder(new TitledBorder("Status Messages"));
 	}
 	
 	/**

@@ -35,7 +35,7 @@ public class QuitDialog extends JDialog implements ActionListener{
 	public QuitDialog(String tittle, Controller c){
 		super.setTitle(tittle);
 		this.cntrl = c;
-		setSize(300,200);
+		setSize(300,100);
 		setLocationRelativeTo(null);
 		panelPregunta = new JPanel();
 		

@@ -1,6 +1,8 @@
-package es.ucm.fdi.tp.views.swing;
+package es.ucm.fdi.tp.views.swing.controlpanel.textbox;
 
 import javax.swing.JTextArea;
+
+import es.ucm.fdi.tp.views.swing.controlpanel.VScrollPane;
 
 public class ScrollableTextarea extends VScrollPane {
 

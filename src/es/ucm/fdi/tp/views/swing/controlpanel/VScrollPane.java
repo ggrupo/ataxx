@@ -1,4 +1,4 @@
-package es.ucm.fdi.tp.views.swing;
+package es.ucm.fdi.tp.views.swing.controlpanel;
 
 import java.awt.Component;
 import javax.swing.JScrollPane;

@@ -1,4 +1,4 @@
-package es.ucm.fdi.tp.views.swing;
+package es.ucm.fdi.tp.views.swing.controlpanel.textbox;
 
 import javax.swing.border.TitledBorder;
 

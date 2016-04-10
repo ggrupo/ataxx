@@ -17,14 +17,20 @@ public class ControlPanel extends JPanel {
 	final private Controller cntrl; 
 	final private Board board;
 	final private SwingView view;
+	final private List<Piece> pieces;
+	final private Map<Piece,SwingView.PlayerMode> modosdeJuego;
 	
 	private MessagesBox messagesBox;
 	
 	
-	public ControlPanel(Controller c, Board b, SwingView v) {
+	public ControlPanel(Controller c, Board board, SwingView v, 
+		Map<Piece,SwingView.PlayerMode> playerModes, List<Piece> pieces) 
+	{
 		this.cntrl = c;
-		this.board = b;
+		this.board = board;
 		this.view = v;
+		this.pieces = pieces;
+		this.modosdeJuego = gameModes;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		initGUI();
@@ -36,7 +42,8 @@ public class ControlPanel extends JPanel {
 	}
 	
 	private void addPlayerInformation(){
-		PlayerInformation player = new PlayerInformation(board, view, null, null);
+		PlayerInformation player = new PlayerInformation(board, view, modosdeJuego, pieces);
+		this.add(player);
 	}
 	
 	private void addExitPane() {

@@ -33,8 +33,8 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	
 	final private Piece WINDOW_OWNER;
 	private Piece turn;
-	final protected Map<Piece,Color> pieceColors;
-	protected Map<Piece, PlayerMode> playerModes;
+	final protected Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
+	final protected Map<Piece, PlayerMode> playerModes = new HashMap<Piece, PlayerMode>(pieces.size());
 	protected List<Piece> pieces;
 	
 	private ControlPanel controlPanelComponent;
@@ -85,9 +85,8 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.WINDOW_OWNER = localPiece;
 		this.turn = null;
 		
-		this.pieceColors = new HashMap<Piece,Color>();
 		
-		initGUI();
+		
 		
 		g.addObserver(this);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,17 +102,15 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	final protected void initGUI() {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
-		this.controlPanelComponent = new ControlPanel(cntrl);
+		this.boardComponent = createBoard();
+		getContentPane().add(boardComponent, BorderLayout.CENTER);
+		
+		this.controlPanelComponent = new ControlPanel(cntrl,this,playerModes,pieces);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);
 		
 		this.setContentPane(container);
 	}
-	
-	final protected void initBoard(Board board) {
-		this.board = board;
-		this.boardComponent = createBoard();
-		getContentPane().add(boardComponent, BorderLayout.CENTER);
-	}
+
 	
 	final public Color getPieceColor(Piece p) { 
 		return pieceColors.get(p); 
@@ -153,7 +150,6 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	 */
 	private void initPlayers(List<Piece> pieces) {
 		this.pieces = pieces;
-		playerModes = new HashMap<Piece, PlayerMode>(pieces.size());
 		for(Piece p: pieces) {
 			playerModes.put(p, PlayerMode.MANUAL);
 		}
@@ -161,12 +157,17 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
-		// TODO Auto-generated method stub
+		//Init everything
 		this.turn = turn;
+		this.board = board;
 		initDefaultColors(pieces);
-		initWindowTitle(gameDesc);
 		initPlayers(pieces);
-		initBoard(board);
+		
+		//Build GUI
+		initGUI();
+		initWindowTitle(gameDesc);
+		
+		//Do things
 		this.controlPanelComponent.showMessage(null);
 		this.controlPanelComponent.showMessage("Game started");
 		showTurn();

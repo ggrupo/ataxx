@@ -103,7 +103,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
 		this.boardComponent = createBoard();
-		getContentPane().add(boardComponent, BorderLayout.CENTER);
+		container.add(boardComponent, BorderLayout.CENTER);
 		
 		this.controlPanelComponent = new ControlPanel(cntrl,board, this,playerModes,pieces);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);

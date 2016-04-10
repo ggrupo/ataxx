@@ -26,4 +26,9 @@ public class VScrollPane extends JScrollPane {
 		this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 	}
+	
+	@Override
+	public Component add(Component comp) {
+		return this.getViewport().add(comp);
+	}
 }

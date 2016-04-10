@@ -40,13 +40,15 @@ public class ControlPanel extends JPanel {
 	}
 	final private void initGUI() {
 		addMessagesBox();
-		addPlayerInformation();
+		addPlayerInfoTable();
 		addExitPane();
 	}
 	
-	private void addPlayerInformation(){
-		PlayerInformation player = new PlayerInformation(board, view, modosdeJuego, pieces);
-		this.add(player);
+	private void addPlayerInfoTable(){
+		PlayerInformation infoTable = new PlayerInformation(board, view, modosdeJuego, pieces);
+		infoTable.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));
+		this.add(infoTable);
 	}
 	
 	private void addExitPane() {

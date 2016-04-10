@@ -2,6 +2,9 @@ package es.ucm.fdi.tp.views.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +35,10 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	private Piece turn;
 	protected Map<Piece,Color> pieceColors;
 	protected Map<Piece, PlayerMode> playerModes;
+	protected List<Piece> pieces;
 	
-	private ControlPanel cntrlPanel;
+	private ControlPanel controlPanelComponent;
+	protected JBoard boardComponent;
 	
 	private static final Color[] DEF_COLORS = {
 			Color.RED, 
@@ -45,7 +50,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	/**
 	 * Player modes (manual, random, etc.)
 	 */
-	enum PlayerMode {
+	public enum PlayerMode {
 		MANUAL("m", "Manual"), RANDOM("r", "Random"), AI("a", "Automatics");
 
 		private String id;
@@ -84,6 +89,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		
 		g.addObserver(this);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultSize();
 	}
 	
 	public abstract void setEnabled(boolean b);
@@ -95,15 +101,16 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	final protected void initGUI() {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
-		this.cntrlPanel = new ControlPanel(cntrl);
-		container.add(cntrlPanel, BorderLayout.LINE_END);
+		this.controlPanelComponent = new ControlPanel(cntrl);
+		container.add(controlPanelComponent, BorderLayout.LINE_END);
 		
 		this.setContentPane(container);
 	}
 	
 	final protected void initBoard(Board board) {
 		this.board = board;
-		getContentPane().add(createBoard(), BorderLayout.CENTER);
+		this.boardComponent = createBoard();
+		getContentPane().add(boardComponent, BorderLayout.CENTER);
 	}
 	
 	final protected Color getPieceColor(Piece p) { 
@@ -130,34 +137,44 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.setTitle("Board Games: " + gameDesc + owner);
 	}
 	
+	private void showTurn() {
+		if(turn.equals(WINDOW_OWNER)) {
+			this.controlPanelComponent.showMessage("Your turn!");
+			this.requestFocus(); //Window becomes focused
+		} else {
+			this.controlPanelComponent.showMessage("Turn for " + turn);
+		}
+	}
+	
 	/**
 	 * Initializes all players to manual at first.
 	 * @param pieces
 	 */
-	private void initPlayerModes(List<Piece> pieces) {
+	private void initPlayers(List<Piece> pieces) {
+		this.pieces = pieces;
 		playerModes = new HashMap<Piece, PlayerMode>(pieces.size());
 		for(Piece p: pieces) {
 			playerModes.put(p, PlayerMode.MANUAL);
 		}
 	}
-
+	
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		// TODO Auto-generated method stub
 		this.turn = turn;
 		initDefaultColors(pieces);
 		initWindowTitle(gameDesc);
-		initPlayerModes(pieces);
+		initPlayers(pieces);
 		initBoard(board);
-		this.cntrlPanel.showMessage(null);
-		this.cntrlPanel.showMessage("Game started");
+		this.controlPanelComponent.showMessage(null);
+		this.controlPanelComponent.showMessage("Game started");
 		showTurn();
 	}
 
 	@Override
 	public void onGameOver(Board board, State state, Piece winner) {
 		// TODO Auto-generated method stub
-		this.cntrlPanel.showMessage("Game ended");
+		this.controlPanelComponent.showMessage("Game ended");
 	}
 
 	@Override
@@ -172,15 +189,6 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		
 	}
 	
-	private void showTurn() {
-		if(turn.equals(WINDOW_OWNER)) {
-			this.cntrlPanel.showMessage("Your turn!");
-			this.requestFocus(); //Window becomes focused
-		} else {
-			this.cntrlPanel.showMessage("Turn for " + turn);
-		}
-	}
-	
 	@Override
 	public void onChangeTurn(Board board, Piece turn) {
 		// TODO Auto-generated method stub
@@ -192,8 +200,12 @@ public abstract class SwingView extends JFrame implements GameObserver {
 
 	@Override
 	public void onError(String msg) {
-		// TODO show alert box
-		
+		new ErrorDialog(msg, this);
+	}
+	
+	private void setDefaultSize() {
+		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		this.setMinimumSize(new Dimension(screenSize.width/2, screenSize.height/2));
 	}
 	
 	final protected static void setDefaultLookAndFeel() {

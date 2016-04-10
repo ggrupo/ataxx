@@ -25,5 +25,10 @@ public class CirclePiece extends BoardPiece {
 		}
     }
 
+	@Override
+	public Color getColor() {
+		return this.color;
+	}
+
 	
 }

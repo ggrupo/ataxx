@@ -28,4 +28,6 @@ public abstract class BoardPiece extends JPanel {
 		this.listener = l;
 		this.addMouseListener(l);
 	}
+	
+	public abstract Color getColor();
 }

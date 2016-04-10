@@ -7,23 +7,24 @@ import java.util.Map;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
-import es.ucm.fdi.tp.basecode.bgame.model.FiniteRectBoard;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+import es.ucm.fdi.tp.views.swing.boardpanel.pieces.BoardPiece;
 import es.ucm.fdi.tp.views.swing.boardpanel.pieces.CirclePiece;
 import es.ucm.fdi.tp.views.swing.boardpanel.pieces.ObstaclePiece;
 import es.ucm.fdi.tp.views.swing.boardpanel.pieces.PieceListener;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
+import es.ucm.fdi.tp.basecode.connectn.ConnectNMove;
 
 public class ConnectNBoard extends JFiniteRectBoard {
 
 	private static final long serialVersionUID = -4187463114811199234L;
-
-	public ConnectNBoard(FiniteRectBoard board, Controller c, Map<Piece,Color> colors) {
+	
+	public ConnectNBoard(Board board, Controller c, Map<Piece,Color> colors) {
 		super(board,c,colors);
 		initBoard(board);
 	}
 	
-	private void initBoard(FiniteRectBoard board) {
+	private void initBoard(Board board) {
 		Piece curr = null;
 		for(int i=0; i<rows; i++) {
 			for(int j=0; j<cols; j++) {
@@ -37,18 +38,15 @@ public class ConnectNBoard extends JFiniteRectBoard {
 						casillas[i][j] = new ObstaclePiece();
 				}
 				this.add(casillas[i][j]);
-				casillas[i][j].addPieceListener(new PieceListener() {
+				casillas[i][j].addPieceListener(new PieceListener(i,j) {
 					
 					@Override
-					public void mouseRightClicked(MouseEvent e) {
-						// TODO Auto-generated method stub
-						System.out.println("Clicked right button");
-					}
+					public void mouseRightClicked(MouseEvent e) {}
 					
 					@Override
 					public void mouseLeftClicked(MouseEvent e) {
-						// TODO Auto-generated method stub
-						System.out.println("Clicked left button");
+						BoardPiece target = (BoardPiece) (e.getSource());
+						new ConnectNMove(row, col, null);
 					}
 				});
 			}

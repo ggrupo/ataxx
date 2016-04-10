@@ -10,6 +10,13 @@ public abstract class PieceListener implements MouseListener {
 	protected final static Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 	
 	protected boolean enabled = true;
+	protected int row;
+	protected int col;
+	
+	public PieceListener(int row, int col) {
+		this.row = row;
+		this.col = col;
+	}
 	
 	/**
 	 * Invoked when the mouse right button has been clicked (pressed and released)

@@ -23,8 +23,8 @@ import es.ucm.fdi.tp.basecode.bgame.model.AIAlgorithm;
 import es.ucm.fdi.tp.basecode.bgame.model.Game;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.basecode.connectn.ConnectNFactory;
 import es.ucm.fdi.tp.basecode.ttt.TicTacToeFactory;
+import es.ucm.fdi.tp.connectn.ConnectNFactoryExt;
 
 /**
  * This is the class with the main method for the board games application.
@@ -546,9 +546,9 @@ public class Main {
 			break;
 		case CONNECT_N:
 			if (dimRows != null && dimCols != null && dimRows == dimCols) {
-				gameFactory = new ConnectNFactory(dimRows);
+				gameFactory = new ConnectNFactoryExt(dimRows);
 			} else {
-				gameFactory = new ConnectNFactory();
+				gameFactory = new ConnectNFactoryExt();
 			}
 			break;
 		case TIC_TAC_TOE:
@@ -781,8 +781,15 @@ public class Main {
 			gameFactory.createConsoleView(g, c);
 			break;
 		case WINDOW:
-			throw new UnsupportedOperationException(
-					"Swing " + (multiviews ? "Multiviews" : "Views") + " are not supported yet! ");
+			c = new Controller(g, pieces);
+			Player randPlayer = gameFactory.createRandomPlayer();
+			Player aiPlayer = gameFactory.createAIPlayer(null);
+			if(multiviews) {
+				throw new UnsupportedOperationException("Swing Multiviews are not supported yet! ");
+			} else {
+				gameFactory.createSwingView(g, c, null, randPlayer, aiPlayer);
+			}
+			break;
 		default:
 			throw new UnsupportedOperationException("Something went wrong! This program point should be unreachable!");
 		}

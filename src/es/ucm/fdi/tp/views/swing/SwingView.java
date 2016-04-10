@@ -34,7 +34,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	final private Piece WINDOW_OWNER;
 	private Piece turn;
 	final protected Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
-	final protected Map<Piece, PlayerMode> playerModes = new HashMap<Piece, PlayerMode>(pieces.size());
+	final protected Map<Piece, PlayerMode> playerModes = new HashMap<Piece, PlayerMode>();
 	protected List<Piece> pieces;
 	
 	private ControlPanel controlPanelComponent;
@@ -105,7 +105,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.boardComponent = createBoard();
 		getContentPane().add(boardComponent, BorderLayout.CENTER);
 		
-		this.controlPanelComponent = new ControlPanel(cntrl,this,playerModes,pieces);
+		this.controlPanelComponent = new ControlPanel(cntrl,board, this,playerModes,pieces);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);
 		
 		this.setContentPane(container);

@@ -1,12 +1,15 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
 import java.awt.Dimension;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
+import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
 import es.ucm.fdi.tp.views.swing.controlpanel.textbox.MessagesBox;
 
@@ -30,7 +33,7 @@ public class ControlPanel extends JPanel {
 		this.board = board;
 		this.view = v;
 		this.pieces = pieces;
-		this.modosdeJuego = gameModes;
+		this.modosdeJuego = playerModes;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		initGUI();

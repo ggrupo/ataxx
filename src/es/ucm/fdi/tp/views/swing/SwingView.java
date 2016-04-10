@@ -33,7 +33,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	
 	final private Piece WINDOW_OWNER;
 	private Piece turn;
-	protected Map<Piece,Color> pieceColors;
+	final protected Map<Piece,Color> pieceColors;
 	protected Map<Piece, PlayerMode> playerModes;
 	protected List<Piece> pieces;
 	
@@ -85,6 +85,8 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.WINDOW_OWNER = localPiece;
 		this.turn = null;
 		
+		this.pieceColors = new HashMap<Piece,Color>();
+		
 		initGUI();
 		
 		g.addObserver(this);
@@ -113,7 +115,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		getContentPane().add(boardComponent, BorderLayout.CENTER);
 	}
 	
-	final protected Color getPieceColor(Piece p) { 
+	final public Color getPieceColor(Piece p) { 
 		return pieceColors.get(p); 
 	} 
 	
@@ -121,13 +123,12 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		return pieceColors.put(p,c); 
 	}
 	
-	final protected Board getBoard() { 
+	final protected Board getBoard() {
 		return this.board; 
 	}
 	
 	
 	private void initDefaultColors(List<Piece> pieces) {
-		this.pieceColors = new HashMap<Piece,Color>();
 		for(char i=0; i<pieces.size(); i++) {
 			pieceColors.put(pieces.get(i), DEF_COLORS[i]);
 		}

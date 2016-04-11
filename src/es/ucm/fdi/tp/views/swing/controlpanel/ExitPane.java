@@ -1,13 +1,16 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
+import es.ucm.fdi.tp.views.swing.QuitDialog;
 
 public class ExitPane extends JPanel implements ActionListener {
 	
@@ -35,7 +38,10 @@ public class ExitPane extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();
 		if(target == this.exitButton) {
-			cntrl.stop();
+			Window parent = SwingUtilities.getWindowAncestor(this);
+			if(new QuitDialog(parent).getValue()) {
+				cntrl.stop();
+			}
 		} else if (target == this.restartButton) {
 			cntrl.restart();
 		}

@@ -6,6 +6,8 @@ public class MessagesBox extends ScrollableTextarea {
 
 	private static final long serialVersionUID = 768586332299945974L;
 
+	final protected static String ENDLINE = System.getProperty("line.separator");
+	final protected static String BULLET = " \u2022 ";
 	
 	public MessagesBox() {
 		super();
@@ -48,6 +50,6 @@ public class MessagesBox extends ScrollableTextarea {
 	 */
 	@Override
 	public void append(String str) {
-		textarea.append("* " + str + "\n");
+		textarea.append(BULLET + str + ENDLINE);
 	}
 }

@@ -11,6 +11,7 @@ import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
+import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChooserPane;
 import es.ucm.fdi.tp.views.swing.controlpanel.textbox.MessagesBox;
 
 public class ControlPanel extends JPanel {
@@ -24,6 +25,8 @@ public class ControlPanel extends JPanel {
 	final private Map<Piece,SwingView.PlayerMode> modosdeJuego;
 	
 	private MessagesBox messagesBox;
+	private PlayersInfoTable infoTable;
+	private ColorChooserPane colorChooser;
 	
 	
 	public ControlPanel(Controller c, Board board, SwingView v, 
@@ -41,14 +44,34 @@ public class ControlPanel extends JPanel {
 	final private void initGUI() {
 		addMessagesBox();
 		addPlayerInfoTable();
+		addColorChangePane();
+		addAutoMovesPane();
 		addExitPane();
+		
+		//this.colorChooser.addObserver(this.infoTable);
+	}
+	
+	private void addMessagesBox() {
+		messagesBox = new MessagesBox();
+		this.add(messagesBox);
 	}
 	
 	private void addPlayerInfoTable(){
-		PlayerInformation infoTable = new PlayerInformation(board, view, modosdeJuego, pieces);
+		this.infoTable = new PlayersInfoTable(board, view, modosdeJuego, pieces);
 		infoTable.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));
 		this.add(infoTable);
+	}
+	
+	private void addColorChangePane() {
+		//this.colorChooser = new ColorChooserPane(pieceColors, this.view);
+	}
+	
+	private void addAutoMovesPane() {
+		AutomaticMoves autoMovesPane = new AutomaticMoves(cntrl, null, null);
+		autoMovesPane.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, autoMovesPane.getHeight()));
+		this.add(autoMovesPane);
 	}
 	
 	private void addExitPane() {
@@ -58,15 +81,15 @@ public class ControlPanel extends JPanel {
 		this.add(exit);
 	}
 	
-	private void addMessagesBox() {
-		messagesBox = new MessagesBox();
-		this.add(messagesBox);
-	}
-	
 	public void showMessage(String m) {
 		if(m != null)
 			this.messagesBox.append(m);
 		else
 			this.messagesBox.setText(null);
+	}
+	
+	public void onPiecesChange() {
+		this.infoTable.refreshTable(pieces);
+		//TODO - Update comboboxes
 	}
 }

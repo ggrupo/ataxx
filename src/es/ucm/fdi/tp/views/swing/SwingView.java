@@ -6,12 +6,14 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import es.ucm.fdi.tp.basecode.bgame.Utils;
 import es.ucm.fdi.tp.basecode.bgame.control.*;
 import es.ucm.fdi.tp.basecode.bgame.model.*;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
@@ -27,25 +29,18 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	private static final long serialVersionUID = -5822298297801045598L;
 	
 	protected Controller cntrl;
-	private Player randPlayer;
-	private Player aiPlayer;
+	final private Player randPlayer;
+	final private Player aiPlayer;
 	private Board board; //A read only board
 	
-	final private Piece WINDOW_OWNER;
 	private Piece turn;
+	final private Piece WINDOW_OWNER;
 	final protected Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
 	final protected Map<Piece, PlayerMode> playerModes = new HashMap<Piece, PlayerMode>();
 	protected List<Piece> pieces;
 	
 	private ControlPanel controlPanelComponent;
 	protected JBoard boardComponent;
-	
-	private static final Color[] DEF_COLORS = {
-			Color.RED, 
-			Color.BLUE, 
-			Color.GREEN, 
-			Color.YELLOW
-	};
 
 	/**
 	 * Player modes (manual, random, etc.)
@@ -125,9 +120,10 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	}
 	
 	
-	private void initDefaultColors(List<Piece> pieces) {
-		for(char i=0; i<pieces.size(); i++) {
-			pieceColors.put(pieces.get(i), DEF_COLORS[i]);
+	protected void initDefaultColors(List<Piece> pieces) {
+		Iterator<Color> colorGen = Utils.colorsGenerator();
+		for(Piece p : pieces) {
+			pieceColors.put(p, colorGen.next());
 		}
 	}
 	private void initWindowTitle(String gameDesc) {
@@ -135,6 +131,9 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.setTitle("Board Games: " + gameDesc + owner);
 	}
 	
+	/**
+	 * Shows who's the turn in the messages box.
+	 */
 	private void showTurn() {
 		if(turn.equals(WINDOW_OWNER)) {
 			this.controlPanelComponent.showMessage("Your turn!");
@@ -193,7 +192,6 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	
 	@Override
 	public void onChangeTurn(Board board, Piece turn) {
-		// TODO Auto-generated method stub
 		this.turn = turn;
 		showTurn();
 		//TODO update board view

@@ -100,7 +100,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.boardComponent = createBoard();
 		container.add(boardComponent, BorderLayout.CENTER);
 		
-		this.controlPanelComponent = new ControlPanel(cntrl,board, this,playerModes,pieces);
+		this.controlPanelComponent = new ControlPanel(cntrl,board, this,playerModes,pieceColors, pieces);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);
 		
 		this.setContentPane(container);
@@ -119,6 +119,9 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		return this.board; 
 	}
 	
+	final public Piece getWindowOwner() {
+		return WINDOW_OWNER;
+	}
 	
 	protected void initDefaultColors(List<Piece> pieces) {
 		Iterator<Color> colorGen = Utils.colorsGenerator();
@@ -174,8 +177,19 @@ public abstract class SwingView extends JFrame implements GameObserver {
 
 	@Override
 	public void onGameOver(Board board, State state, Piece winner) {
-		// TODO Auto-generated method stub
-		this.controlPanelComponent.showMessage("Game ended");
+		this.controlPanelComponent.showMessage("Game over: " + state);
+		if(state == State.Stopped) {
+			this.setVisible(false);
+			this.dispose();
+		} else if(state == State.Draw) {
+			this.controlPanelComponent.showMessage("Draw");
+		} else if(state == State.Won) {
+			if(winner.equals(WINDOW_OWNER)) {
+				this.controlPanelComponent.showMessage("You won");
+			} else {
+				this.controlPanelComponent.showMessage("The winner is: " + winner);
+			}
+		}
 	}
 
 	@Override

@@ -23,13 +23,15 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 	final private PlayerInfoTableModel tableModel;
 	
 	final List<Color> colors = new ArrayList<Color>();
+	final List<Piece> pieceList;
 	
 	final private JTable table;
 	
-	private SwingView view;
+	private Map<Piece,Color> colorMap;
 
-	public PlayersInfoTable(Board board, SwingView view, Map<Piece,SwingView.PlayerMode> playerModes, List<Piece> pieces) {
-		this.view = view;
+	public PlayersInfoTable(Board board, Map<Piece,Color> playerColors, Map<Piece,SwingView.PlayerMode> playerModes, List<Piece> pieces) {
+		this.colorMap = playerColors;
+		this.pieceList = pieces;
 		
 		this.tableModel = new PlayerInfoTableModel(board, playerModes);
 		this.table = new JTable(tableModel) {
@@ -46,7 +48,7 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 			}
 		};
 		
-		refreshTable(pieces);
+		refreshTable();
 		
 		this.table.setEnabled(false);
 		this.table.setPreferredScrollableViewportSize(table.getPreferredSize());
@@ -59,14 +61,15 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 	@Override
 	public void onColorChange(Piece player, Color newColor) {
 		table.repaint();
-		tableModel.refresh();
+		refreshTable();
 	}
 	
-	public void refreshTable(List<Piece> pieces) {
+	public void refreshTable() {
 		tableModel.clear();
-		for (Piece p : pieces) {
+		colors.clear();
+		for (Piece p : pieceList) {
 			tableModel.addPlayer(p);
-			colors.add(view.getPieceColor(p));
+			colors.add(colorMap.get(p));
 		}
 		table.repaint();
 	}

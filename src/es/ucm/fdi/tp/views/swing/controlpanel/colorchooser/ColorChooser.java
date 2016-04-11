@@ -1,8 +1,8 @@
 package es.ucm.fdi.tp.views.swing.controlpanel.colorchooser;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
@@ -21,14 +20,15 @@ import javax.swing.KeyStroke;
 public class ColorChooser extends JDialog {
 
 	private static final long serialVersionUID = 1L;
+	
+	final protected static String DEF_TITLE = "Choose a color";
 
-	private JColorChooser colorChooser;
 	private Color color;
 
-	public ColorChooser(JFrame parent, String title, Color initColor) {
-		super(parent, title);
+	public ColorChooser(Window parent, String title, Color initColor) {
+		super(parent, (title != null ? title : DEF_TITLE) );
 		setModalityType(DEFAULT_MODALITY_TYPE);//<-- Stops parent window execution
-		colorChooser = new JColorChooser(initColor == null ? Color.WHITE : initColor);
+		final JColorChooser colorChooser = new JColorChooser(initColor == null ? Color.WHITE : initColor);
 
 		getContentPane().add(colorChooser);
 
@@ -63,7 +63,7 @@ public class ColorChooser extends JDialog {
 		setVisible(true);
 	}
 	
-	private void centerWindow(JFrame parent) {
+	private void centerWindow(Window parent) {
 		setLocationByPlatform(true);
 		setLocationRelativeTo(parent);
 	}

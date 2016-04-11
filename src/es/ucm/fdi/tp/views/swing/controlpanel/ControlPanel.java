@@ -1,5 +1,6 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,12 @@ public class ControlPanel extends JPanel {
 
 	private static final long serialVersionUID = -5012854304785344947L;
 	
-	final private Controller cntrl; 
+	final private Controller cntrl;
 	final private Board board;
 	final private SwingView view;
 	final private List<Piece> pieces;
 	final private Map<Piece,SwingView.PlayerMode> modosdeJuego;
+	final private Map<Piece,Color> playerColors;
 	
 	private MessagesBox messagesBox;
 	private PlayersInfoTable infoTable;
@@ -30,13 +32,15 @@ public class ControlPanel extends JPanel {
 	
 	
 	public ControlPanel(Controller c, Board board, SwingView v, 
-		Map<Piece,SwingView.PlayerMode> playerModes, List<Piece> pieces) 
+		Map<Piece,SwingView.PlayerMode> playerModes, 
+		Map<Piece, Color> playerColors, List<Piece> pieces) 
 	{
 		this.cntrl = c;
 		this.board = board;
 		this.view = v;
 		this.pieces = pieces;
 		this.modosdeJuego = playerModes;
+		this.playerColors = playerColors;
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		initGUI();
@@ -48,7 +52,7 @@ public class ControlPanel extends JPanel {
 		addAutoMovesPane();
 		addExitPane();
 		
-		//this.colorChooser.addObserver(this.infoTable);
+		this.colorChooser.addObserver(this.infoTable);
 	}
 	
 	private void addMessagesBox() {
@@ -57,14 +61,17 @@ public class ControlPanel extends JPanel {
 	}
 	
 	private void addPlayerInfoTable(){
-		this.infoTable = new PlayersInfoTable(board, view, modosdeJuego, pieces);
+		this.infoTable = new PlayersInfoTable(board, playerColors, modosdeJuego, pieces);
 		infoTable.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));
 		this.add(infoTable);
 	}
 	
 	private void addColorChangePane() {
-		//this.colorChooser = new ColorChooserPane(pieceColors, this.view);
+		this.colorChooser = new ColorChooserPane(pieces,playerColors, view.getWindowOwner());
+		colorChooser.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, colorChooser.getHeight()));
+		this.add(colorChooser);
 	}
 	
 	private void addAutoMovesPane() {
@@ -89,7 +96,7 @@ public class ControlPanel extends JPanel {
 	}
 	
 	public void onPiecesChange() {
-		this.infoTable.refreshTable(pieces);
-		//TODO - Update comboboxes
+		this.infoTable.refreshTable();
+		this.colorChooser.refresh();
 	}
 }

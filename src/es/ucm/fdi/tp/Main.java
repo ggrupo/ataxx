@@ -785,7 +785,9 @@ public class Main {
 			Player randPlayer = gameFactory.createRandomPlayer();
 			Player aiPlayer = gameFactory.createAIPlayer(null);
 			if(multiviews) {
-				throw new UnsupportedOperationException("Swing Multiviews are not supported yet! ");
+				for(Piece p : pieces) {
+					gameFactory.createSwingView(g, c, p, randPlayer, aiPlayer);
+				}
 			} else {
 				gameFactory.createSwingView(g, c, null, randPlayer, aiPlayer);
 			}

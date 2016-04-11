@@ -16,20 +16,23 @@ import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
 import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
 
-public class PlayerInformation extends VScrollPane implements ColorChangeObserver {
+public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver {
 
 	private static final long serialVersionUID = 1771957667026716116L;
-
-	public PlayerInformation(Board board, SwingView vista, Map<Piece,SwingView.PlayerMode> modosJuego, List<Piece> listaPiezas){
 	
-		PlayerInfoTableModel tableModel = new PlayerInfoTableModel(board, modosJuego);
+	final private PlayerInfoTableModel tableModel;
+	
+	final List<Color> colors = new ArrayList<Color>();
+	
+	final private JTable table;
+	
+	private SwingView view;
 
-		final List<Color> colores = new ArrayList<Color>();
-		for (Piece p : listaPiezas) {
-			tableModel.addPlayer(p);
-			colores.add(vista.getPieceColor(p));
-		}
-		JTable table = new JTable(tableModel) {
+	public PlayersInfoTable(Board board, SwingView view, Map<Piece,SwingView.PlayerMode> playerModes, List<Piece> pieces) {
+		this.view = view;
+		
+		this.tableModel = new PlayerInfoTableModel(board, playerModes);
+		this.table = new JTable(tableModel) {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
@@ -38,20 +41,34 @@ public class PlayerInformation extends VScrollPane implements ColorChangeObserve
 
 				// the color of row 'row' is taken from the colors table, if
 				// 'null' setBackground will use the parent component color.
-				comp.setBackground(colores.get(row));
+				comp.setBackground(colors.get(row));
 				return comp;
 			}
 		};
-		table.setEnabled(false);
-		table.setPreferredScrollableViewportSize(table.getPreferredSize());
-		this.add(table);
+		
+		refreshTable(pieces);
+		
+		this.table.setEnabled(false);
+		this.table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		this.add(this.table);
 		this.setBorder(new TitledBorder("Players information"));
+		
+		
 	}
 
 	@Override
 	public void onColorChange(Piece player, Color newColor) {
-		// TODO Auto-generated method stub
-		
+		table.repaint();
+		tableModel.refresh();
+	}
+	
+	public void refreshTable(List<Piece> pieces) {
+		tableModel.clear();
+		for (Piece p : pieces) {
+			tableModel.addPlayer(p);
+			colors.add(view.getPieceColor(p));
+		}
+		table.repaint();
 	}
 	
 	private static class PlayerInfoTableModel extends DefaultTableModel {
@@ -104,6 +121,11 @@ public class PlayerInformation extends VScrollPane implements ColorChangeObserve
 		
 		private void refresh() {
 			fireTableDataChanged();
+		}
+		
+		public void clear() {
+			this.players.clear();
+			refresh();
 		}
 	}
 	

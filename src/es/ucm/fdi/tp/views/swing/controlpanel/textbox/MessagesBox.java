@@ -50,6 +50,19 @@ public class MessagesBox extends ScrollableTextarea {
 	 */
 	@Override
 	public void append(String str) {
-		textarea.append(BULLET + str + ENDLINE);
+		try {
+			textarea.append(BULLET + str + ENDLINE);
+		} catch(NullPointerException e) {
+			textarea.setText(null);
+		}
+	}
+	
+	@Override
+	public void setText(String str) {
+		try {
+			textarea.setText(BULLET + str + ENDLINE);
+		} catch(NullPointerException e) {
+			textarea.setText(null);
+		}
 	}
 }

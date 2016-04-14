@@ -77,24 +77,25 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 		g.fillRect(x, y, size, size);
 		
 		if(piece != null) {
-			paintPlayerPiece(g, new Piece("f"), x, y, size);
+			paintPlayerPiece(g, piece, x, y, size);
 		}
 	}
 	
 	private void paintPlayerPiece(Graphics g, Piece p, int x, int y, int size) {
 		Graphics2D g2d = (Graphics2D) g;
-		int pieceSize = (int) (size* 0.9f);
+		int pieceSize = (int) (size* 0.8f);
 		int pieceMargin = (size - pieceSize)/2;
 		
 		Color pColor = pieceColors.get(p);
 		
-		g2d.setColor(pColor);
-		g2d.fillArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize ,0,360);
-		
-		g2d.setColor(pColor.darker());
-		g2d.setStroke(new BasicStroke(3));
-		g2d.drawArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize, 0,360);
-		
+		try {
+			g2d.setColor(pColor);
+			g2d.fillArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize ,0,360);
+			
+			g2d.setColor(pColor.darker());
+			g2d.setStroke(new BasicStroke(4));
+			g2d.drawArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize, 0,360);
+		} catch (NullPointerException e) {}
 	}
 
 	@Override

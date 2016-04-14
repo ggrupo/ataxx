@@ -104,7 +104,7 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	@Override
 	protected void handlePieceLeftClick(int i, int j) {
 		// TODO Make a move
-		System.out.println("right clicked piece " + i +", " + j);
+		System.out.println("Left clicked piece " + i +", " + j);
 	}
 
 	@Override

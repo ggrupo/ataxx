@@ -2,6 +2,7 @@ package es.ucm.fdi.tp.views.swing.boardpanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.List;
 import java.util.Map;
 
@@ -74,23 +75,34 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 
 	@Override
 	protected final void handleRightClick(int x, int y) {
-		if(x >= hMargin && (x < getWidth()-hMargin) &&
-		   y >= vMargin && (y < getHeight()-vMargin)) {
-			int i = (y - vMargin)/(pieceSize+MARGIN_GAP);
-			int j = (x - hMargin)/(pieceSize+MARGIN_GAP);
-			handlePieceRightClick(i, j);
-		}
+		Point piece = calculatePieceAt(x, y);
+		if(piece != null)
+			handlePieceRightClick(piece.y, piece.x);
 	}
 
 
 	@Override
 	protected final void handleLeftClick(int x, int y) {
+		Point piece = calculatePieceAt(x, y);
+		if(piece != null)
+			handlePieceLeftClick(piece.y, piece.x);
+	}
+	
+	/**
+	 * Calculates the board piece placed at x and y coordinates.
+	 * @param x - x coordinate
+	 * @param y - y coordinate
+	 * @return Point in a hipothetical matrix with x coordinate representing i 
+	 * position and y coordinate representing j position in the matrix.
+	 */
+	protected final Point calculatePieceAt(int x, int y) {
 		if(x >= hMargin && (x < getWidth()-hMargin) &&
 		   y >= vMargin && (y < getHeight()-vMargin)) {
 			int i = (y - vMargin)/(pieceSize+MARGIN_GAP);
 			int j = (x - hMargin)/(pieceSize+MARGIN_GAP);
-			handlePieceLeftClick(i, j);
+			return new Point(j,i);
 		}
+		return null;
 	}
 	
 	/**

@@ -1,62 +1,34 @@
 package es.ucm.fdi.tp.views.swing.boardpanel;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.event.MouseEvent;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
-import es.ucm.fdi.tp.views.swing.boardpanel.pieces.BoardPiece;
-import es.ucm.fdi.tp.views.swing.boardpanel.pieces.CirclePiece;
-import es.ucm.fdi.tp.views.swing.boardpanel.pieces.ObstaclePiece;
-import es.ucm.fdi.tp.views.swing.boardpanel.pieces.PieceListener;
+import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.basecode.connectn.ConnectNMove;
 
-public class ConnectNBoard extends JFiniteRectBoard {
+public class ConnectNBoard extends FiniteRectBoardComponent implements GameObserver {
 
 	private static final long serialVersionUID = -4187463114811199234L;
 	
-	public ConnectNBoard(Board board, Controller c, Map<Piece,Color> colors) {
-		super(board,c,colors);
-		initBoard(board);
-	}
+	public static final Color PIECE_BG_COLOR = new Color(153,153,153);
+	//public static final Color PIECE_HOVER_BG_COLOR = new Color(204,204,204);
 	
-	private void initBoard(Board board) {
-		Piece curr = null;
-		for(int i=0; i<rows; i++) {
-			for(int j=0; j<cols; j++) {
-				curr = board.getPosition(i, j);
-				if(curr == null) {
-					casillas[i][j] = new CirclePiece(null);
-				} else {
-					if(pieceColors.containsKey(curr))
-						casillas[i][j] = new CirclePiece(pieceColors.get(curr));
-					else
-						casillas[i][j] = new ObstaclePiece();
-				}
-				this.add(casillas[i][j]);
-				casillas[i][j].addPieceListener(new PieceListener(i,j) {
-					
-					@Override
-					public void mouseRightClicked(MouseEvent e) {}
-					
-					@Override
-					public void mouseLeftClicked(MouseEvent e) {
-						BoardPiece target = (BoardPiece) (e.getSource());
-						new ConnectNMove(row, col, null);
-					}
-				});
-			}
-		}
+	public ConnectNBoard(Controller c, Map<Piece,Color> colors) {
+		super(c,colors);
 	}
 
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		super.onGameStart(board, gameDesc, pieces, turn);
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -87,6 +59,56 @@ public class ConnectNBoard extends JFiniteRectBoard {
 	public void onError(String msg) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void redraw() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected void paintPiece(Graphics g, int i, int j, int x, int y, int size) {
+		Piece piece = getBoard().getPosition(i, j);
+		
+		g.setColor(PIECE_BG_COLOR);
+		g.fillRect(x, y, size, size);
+		
+		if(piece != null) {
+			paintPlayerPiece(g, new Piece("f"), x, y, size);
+		}
+	}
+	
+	private void paintPlayerPiece(Graphics g, Piece p, int x, int y, int size) {
+		Graphics2D g2d = (Graphics2D) g;
+		int pieceSize = (int) (size* 0.9f);
+		int pieceMargin = (size - pieceSize)/2;
+		
+		Color pColor = pieceColors.get(p);
+		
+		g2d.setColor(pColor);
+		g2d.fillArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize ,0,360);
+		
+		g2d.setColor(pColor.darker());
+		g2d.setStroke(new BasicStroke(3));
+		g2d.drawArc(x + pieceMargin, y + pieceMargin, pieceSize, pieceSize, 0,360);
+		
+	}
+
+	@Override
+	protected void handlePieceRightClick(int i, int j) {}
+
+	@Override
+	protected void handlePieceLeftClick(int i, int j) {
+		// TODO Make a move
+		System.out.println("right clicked piece " + i +", " + j);
+	}
+
+	@Override
+	protected int getMargin() {
+		return 4;
 	}
 
 }

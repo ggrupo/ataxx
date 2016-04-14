@@ -8,7 +8,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.FiniteRectBoardSwingView;
 import es.ucm.fdi.tp.views.swing.boardpanel.ConnectNBoard;
-import es.ucm.fdi.tp.views.swing.boardpanel.JBoard;
+import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 
 public class ConnectNSwingView extends FiniteRectBoardSwingView {
 
@@ -22,8 +22,8 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView {
 	}
 	
 	@Override
-	protected JBoard createBoard() {
-		return new ConnectNBoard(getBoard(), cntrl, pieceColors);
+	protected BoardComponent createBoard() {
+		return new ConnectNBoard(cntrl, pieceColors);
 	}
 
 	@Override

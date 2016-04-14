@@ -21,7 +21,22 @@ public class ExitPane extends JPanel implements ActionListener {
 	
 	private Controller cntrl;
 	
+	/**
+	 * A panel containg an exit button and a restart button.
+	 * @param c - controller over which actions will be applied
+	 */
 	public ExitPane(Controller c) {
+		this(c,true);
+	}
+	
+	/**
+	 * A panel containg an exit button and a restart button if restartButton
+	 * is true.
+	 * @param c - controller over which actions will be applied
+	 * @param restartOption - designates wether the restart button should be 
+	 * visible or not
+	 */
+	public ExitPane(Controller c, boolean restartOption) {
 		super(new FlowLayout());
 		this.cntrl = c;
 		
@@ -29,9 +44,11 @@ public class ExitPane extends JPanel implements ActionListener {
 		this.exitButton.addActionListener(this);
 		this.add(exitButton);
 		
-		this.restartButton = new JButton(" Restart ");
-		this.restartButton.addActionListener(this);
-		this.add(restartButton);
+		if(restartOption) {
+			this.restartButton = new JButton(" Restart ");
+			this.restartButton.addActionListener(this);
+			this.add(restartButton);
+		}
 	}
 	
 	@Override

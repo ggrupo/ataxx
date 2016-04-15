@@ -11,6 +11,9 @@ public class QuitDialog {
 	private boolean accepted;
 	
 	public QuitDialog(Window parent) {
+		if(parent !=null)
+			parent.toFront();
+		
 		int op = JOptionPane.showConfirmDialog(
 				parent, DIALOG_MESSAGE,DIALOG_TITLE, 
 				JOptionPane.YES_NO_OPTION);

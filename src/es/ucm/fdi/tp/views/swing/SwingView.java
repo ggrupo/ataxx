@@ -227,6 +227,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		//TODO update control panel (disable buttons or whatever)
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
+			this.toFront();
 		}
 	}
 

@@ -22,8 +22,9 @@ import es.ucm.fdi.tp.basecode.bgame.model.*;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanel;
+import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
 
-public abstract class SwingView extends JFrame implements GameObserver {
+public abstract class SwingView extends JFrame implements GameObserver, ColorChangeObserver {
 	
 	static {
 		setDefaultLookAndFeel();
@@ -83,7 +84,9 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.WINDOW_OWNER = localPiece;
 		this.turn = null;
 		
-		this.setDefaultSize();
+		initGUI(g);
+		
+		this.setDefaultWindowSize();
 		this.setLocationByPlatform(true);
 		
 		//Exit dialog before closing the windows
@@ -105,16 +108,20 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	
 	protected abstract BoardComponent createBoard();
 	
-	protected abstract void redrawBoard();
+	protected final void redrawBoard() {
+		this.boardComponent.redraw();
+	}
 	
-	final protected void initGUI() {
+	private void initGUI(Observable<GameObserver> g) {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
 		this.boardComponent = createBoard();
 		container.add(boardComponent, BorderLayout.CENTER);
+		g.addObserver(boardComponent);
 		
-		this.controlPanelComponent = new ControlPanel(cntrl,board, this,playerModes,pieceColors, pieces);
+		this.controlPanelComponent = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);
+		g.addObserver(controlPanelComponent);
 		
 		this.setContentPane(container);
 	}
@@ -132,7 +139,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		return this.board; 
 	}
 	
-	final public Piece getWindowOwner() {
+	public final Piece getWindowOwner() {
 		return WINDOW_OWNER;
 	}
 	
@@ -148,18 +155,6 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	}
 	
 	/**
-	 * Shows who's the turn in the messages box.
-	 */
-	private void showTurn() {
-		if(turn.equals(WINDOW_OWNER)) {
-			this.controlPanelComponent.showMessage("Your turn!");
-			this.requestFocus(); //Window becomes focused
-		} else {
-			this.controlPanelComponent.showMessage("Turn for " + turn);
-		}
-	}
-	
-	/**
 	 * Initializes all players to manual at first.
 	 * @param pieces
 	 */
@@ -170,6 +165,7 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		}
 	}
 	
+	
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		//Init everything
@@ -177,33 +173,15 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		this.board = board;
 		initDefaultColors(pieces);
 		initPlayers(pieces);
-		
-		//Build GUI
-		initGUI();
+
 		initWindowTitle(gameDesc);
-		
-		//Do things
-		this.controlPanelComponent.showMessage(null);
-		this.controlPanelComponent.showMessage("Game started");
-		showTurn();
-		
-		this.boardComponent.onGameStart(board, gameDesc, pieces, turn);
 	}
 
 	@Override
 	public void onGameOver(Board board, State state, Piece winner) {
-		this.controlPanelComponent.showMessage("Game over: " + state);
 		if(state == State.Stopped) {
 			this.setVisible(false);
 			this.dispose();
-		} else if(state == State.Draw) {
-			this.controlPanelComponent.showMessage("Draw");
-		} else if(state == State.Won) {
-			if(winner.equals(WINDOW_OWNER)) {
-				this.controlPanelComponent.showMessage("You won");
-			} else {
-				this.controlPanelComponent.showMessage("The winner is: " + winner);
-			}
 		}
 	}
 
@@ -215,16 +193,13 @@ public abstract class SwingView extends JFrame implements GameObserver {
 
 	@Override
 	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		// TODO Auto-generated method stub
-		
+		redrawBoard();
 	}
 	
 	@Override
 	public void onChangeTurn(Board board, Piece turn) {
 		this.turn = turn;
-		showTurn();
 		//TODO update board view
-		//TODO update control panel (disable buttons or whatever)
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
 			this.toFront();
@@ -236,10 +211,11 @@ public abstract class SwingView extends JFrame implements GameObserver {
 		new ErrorDialog(msg, this);
 	}
 	
-	private void setDefaultSize() {
+	private void setDefaultWindowSize() {
 		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		this.setSize(screenSize.width/2, screenSize.height*3/4);
 		this.setMinimumSize(new Dimension(screenSize.width/2, screenSize.height/2));
-		pack();
+		
 	}
 	
 	private static void setDefaultLookAndFeel() {
@@ -249,6 +225,11 @@ public abstract class SwingView extends JFrame implements GameObserver {
 	    } catch (Exception e) {
 	    	System.err.println("Look and feel mode: " + e.getMessage());
 		}
+	}
+
+	@Override
+	public void onColorChange(Piece player, Color newColor) {
+		this.boardComponent.onColorChange(player, newColor);
 	}
 
 }

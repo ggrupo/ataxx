@@ -22,8 +22,8 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 	
 	final private PlayerInfoTableModel tableModel;
 	
-	final List<Color> colors = new ArrayList<Color>();
-	final List<Piece> pieceList;
+	private List<Color> colors = new ArrayList<Color>();
+	private List<Piece> pieceList;
 	
 	final private JTable table;
 	
@@ -72,6 +72,11 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 			colors.add(colorMap.get(p));
 		}
 		table.repaint();
+	}
+	
+	public void refreshTable(List<Piece> pieces) {
+		this.pieceList = pieces;
+		refreshTable();
 	}
 	
 	private static class PlayerInfoTableModel extends DefaultTableModel {

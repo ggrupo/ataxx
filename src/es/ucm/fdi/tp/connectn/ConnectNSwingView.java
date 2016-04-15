@@ -32,10 +32,4 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView {
 		
 	}
 
-	@Override
-	protected void redrawBoard() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

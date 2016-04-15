@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,8 +14,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 
 import es.ucm.fdi.tp.basecode.bgame.Utils;
 import es.ucm.fdi.tp.basecode.bgame.control.*;
@@ -95,9 +102,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 			
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if((new QuitDialog(SwingView.this)).getValue()) {
-					SwingView.this.cntrl.stop();
-				}
+				closeGame();
 			}
 		});
 		
@@ -141,6 +146,15 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	
 	public final Piece getWindowOwner() {
 		return WINDOW_OWNER;
+	}
+	
+	/**
+	 * Closes the game after asking for confirmation.
+	 */
+	public void closeGame() {
+		if((new QuitDialog(SwingView.this)).getValue()) {
+			SwingView.this.cntrl.stop();
+		}
 	}
 	
 	protected void initDefaultColors(List<Piece> pieces) {
@@ -230,6 +244,23 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	@Override
 	public void onColorChange(Piece player, Color newColor) {
 		this.boardComponent.onColorChange(player, newColor);
+	}
+	
+	@Override
+	public JRootPane createRootPane() {
+		JRootPane rootPane = new JRootPane();
+		KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
+
+		@SuppressWarnings("serial")
+		Action action = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				closeGame();
+			}
+		};
+		InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		inputMap.put(stroke, "ESCAPE");
+		rootPane.getActionMap().put("ESCAPE", action);
+		return rootPane;
 	}
 
 }

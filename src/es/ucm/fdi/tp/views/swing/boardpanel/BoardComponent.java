@@ -14,6 +14,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
+import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
 
 public abstract class BoardComponent extends JPanel implements GameObserver, ColorChangeObserver, MouseListener {
@@ -26,17 +27,20 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	
 	final protected Controller cntrl;
 	final protected Map<Piece,Color> pieceColors;
+	final protected Map<Piece,PlayerMode> playerModes;
 	
 	private Board board;
 	
 	
-	protected BoardComponent(Controller c, Map<Piece,Color> colors) {
+	protected BoardComponent(Controller c, Map<Piece,Color> colors, Map<Piece, PlayerMode> playerModes) {
 		this.cntrl = c;
 		this.pieceColors = colors;
+		this.playerModes = playerModes;
 		
 		this.setOpaque(true);
 		this.setBackground(BG_COLOR);
 		this.addMouseListener(this);
+		
 	}
 	
 	@Override
@@ -94,6 +98,7 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		this.board = board;
+		this.setEnabled(true);
 		redraw();
 	}
 
@@ -106,5 +111,13 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	public void onColorChange(Piece player, Color newColor) {
 		this.redraw();
 	}
-	
+
+	@Override
+	public void onChangeTurn(Board board, Piece turn) {
+		if(this.playerModes.get(turn)==PlayerMode.MANUAL){
+			this.setEnabled(true);
+		}
+		else
+			this.setEnabled(false);
+	}
 }

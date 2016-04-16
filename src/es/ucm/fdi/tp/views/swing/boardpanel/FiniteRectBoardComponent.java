@@ -10,6 +10,7 @@ import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
+import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 
 
 public abstract class FiniteRectBoardComponent extends BoardComponent implements GameObserver {
@@ -27,8 +28,8 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	private final int MARGIN_GAP;
 	
 
-	protected FiniteRectBoardComponent(Controller c, Map<Piece,Color> colors) {
-		super(c, colors);
+	protected FiniteRectBoardComponent(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
+		super(c, colors, playerModes);
 		this.MARGIN_GAP = getMargin();
 	}
 	

@@ -12,6 +12,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.ErrorDialog;
+import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 
 public class ConnectNBoard extends FiniteRectBoardComponent implements GameObserver {
 
@@ -21,44 +22,8 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	protected static final Color PIECE_SHADOW_COLOR = new Color(51,51,51,100);
 	//public static final Color PIECE_HOVER_BG_COLOR = new Color(204,204,204);
 	
-	public ConnectNBoard(Controller c, Map<Piece,Color> colors) {
-		super(c,colors);
-	}
-
-	@Override
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
-		super.onGameStart(board, gameDesc, pieces, turn);
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMoveStart(Board board, Piece turn) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onChangeTurn(Board board, Piece turn) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onError(String msg) {
-		// TODO Auto-generated method stub
-		
+	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
+		super(c,colors, playerModes);
 	}
 
 
@@ -119,6 +84,27 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	@Override
 	protected int getMargin() {
 		return 4;
+	}
+
+
+	@Override
+	public void onMoveStart(Board board, Piece turn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onMoveEnd(Board board, Piece turn, boolean success) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onError(String msg) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

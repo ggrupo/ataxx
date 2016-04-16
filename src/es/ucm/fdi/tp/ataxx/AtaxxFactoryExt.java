@@ -7,12 +7,18 @@ import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.connectn.ConnectNSwingView;
 
-public class AtaxxFactoryExt extends  AtaxxFactory{
+public class AtaxxFactoryExt extends AtaxxFactory {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7903719868927465694L;
+	
+	public AtaxxFactoryExt() {
+		super();
+	}
+	
+	public AtaxxFactoryExt(int dim) {
+		super(dim);
+	}
+	
 	@Override
 	public void createSwingView(final Observable<GameObserver> g, final Controller c, final Piece viewPiece,
 			final Player random, final Player ai) {
@@ -26,11 +32,4 @@ public class AtaxxFactoryExt extends  AtaxxFactory{
 		
 	}
 	
-	public AtaxxFactoryExt() {
-		super();
-	}
-	
-	public AtaxxFactoryExt(int dim) {
-		super(dim);
-	}
 }

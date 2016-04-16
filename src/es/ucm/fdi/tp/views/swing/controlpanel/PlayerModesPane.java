@@ -57,7 +57,7 @@ public class PlayerModesPane extends JPanel implements ActionListener {
 	}
 	
 	private void buildPieceList(final Piece windowOwner) {
-		if(MODE != MANUAL_ONLY) {
+		if(canChangePlayer) {
 			this.playersCombo = new JComboBox<Piece>();
 			
 			playersCombo.addActionListener(new ActionListener() {

@@ -77,7 +77,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 
 		@Override
 		public String toString() {
-			return id;
+			return desc;
 		}
 	}
 	
@@ -146,6 +146,10 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	
 	public final Piece getWindowOwner() {
 		return WINDOW_OWNER;
+	}
+	
+	final public void showMessage(String m) {
+		this.controlPanelComponent.showMessage(m);
 	}
 	
 	/**

@@ -63,5 +63,11 @@ public class ExitPane extends JPanel implements ActionListener {
 			cntrl.restart();
 		}
 	}
+	
+	public void setEnabled(boolean b) {
+		super.setEnabled(b);
+		restartButton.setEnabled(b);
+		exitButton.setEnabled(b);
+	}
 
 }

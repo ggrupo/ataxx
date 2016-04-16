@@ -38,7 +38,7 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	}
 	
 	@Override
-	final public void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		calcMetrics();
@@ -49,6 +49,14 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 			}
 		}
 		
+	}
+	
+	protected final int getMarginTop() {
+		return this.vMargin;
+	}
+	
+	protected final int getMarginLeft() {
+		return this.hMargin;
 	}
 	
 	private void calcMetrics() {

@@ -35,7 +35,7 @@ public class ColorChooser extends JDialog {
 		// Create button panel
 		JPanel buttonPane = new JPanel();
 		
-		JButton buttonOK = new JButton("OK");
+		JButton buttonOK = new JButton(" Ok ");
 		buttonOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

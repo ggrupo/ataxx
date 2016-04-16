@@ -83,7 +83,7 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	
 	public void refresh() {
 		if(WINDOW_OWNER == null) {
-			piecesCombo.removeAll();
+			piecesCombo.removeAllItems();
 			for(Piece p : pieces) {
 				piecesCombo.addItem(p);
 			}

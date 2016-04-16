@@ -45,7 +45,6 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	
 	@Override
 	public void setEnabled(boolean b) {
-		super.setEnabled(b);
 		this.enabled = b;
 	}
 	

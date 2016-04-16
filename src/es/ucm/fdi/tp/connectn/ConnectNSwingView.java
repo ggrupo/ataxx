@@ -10,7 +10,7 @@ import es.ucm.fdi.tp.views.swing.FiniteRectBoardSwingView;
 import es.ucm.fdi.tp.views.swing.boardpanel.ConnectNBoard;
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 
-public class ConnectNSwingView extends FiniteRectBoardSwingView {
+public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameObserver {
 
 	private static final long serialVersionUID = -4401832872659565879L;
 

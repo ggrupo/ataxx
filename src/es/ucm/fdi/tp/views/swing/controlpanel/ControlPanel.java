@@ -26,7 +26,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	final private Controller cntrl;
 	final private SwingView view;
 	
-	final private Map<Piece,SwingView.PlayerMode> modosdeJuego;
+	final private Map<Piece,SwingView.PlayerMode> playerModes;
 	final private Map<Piece,Color> playerColors;
 	
 	private final Player randPlayer;
@@ -38,6 +38,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	private MessagesBox messagesBox;
 	private PlayersInfoTable infoTable;
 	private ColorChooserPane colorChooser;
+	private PlayerModesPane modesPane;
 	private AutomaticMoves autoMovesPane;
 	
 	private final Piece WINDOW_OWNER;
@@ -50,7 +51,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	{
 		this.cntrl = c;
 		this.view = v;
-		this.modosdeJuego = playerModes;
+		this.playerModes = playerModes;
 		this.playerColors = playerColors;
 		this.WINDOW_OWNER = view.getWindowOwner();
 		this.randPlayer = randPlayer;
@@ -77,7 +78,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addPlayerInfoTable(){
-		this.infoTable = new PlayersInfoTable(board, playerColors, modosdeJuego, pieces);
+		this.infoTable = new PlayersInfoTable(board, playerColors, playerModes, pieces);
 		infoTable.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));
 		this.add(infoTable);
@@ -91,7 +92,15 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addPlayerModesPane() {
-		PlayerModesPane modesPane = new PlayerModesPane();
+		byte mode = PlayerModesPane.MANUAL_ONLY;
+		if(randPlayer != null && aiPlayer != null)
+			mode = PlayerModesPane.MANUAL_RANDOM_AI;
+		else if(randPlayer != null)
+			mode = PlayerModesPane.MANUAL_RANDOM;
+		else if(randPlayer != null)
+			mode = PlayerModesPane.MANUAL_AI;
+		
+		this.modesPane = new PlayerModesPane(playerModes, mode, WINDOW_OWNER);
 		modesPane.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, modesPane.getHeight()));
 		this.add(modesPane);
@@ -124,7 +133,15 @@ public class ControlPanel extends JPanel implements GameObserver {
 	public void onPiecesChange() {
 		this.infoTable.refreshTable();
 		this.colorChooser.refresh();
+		this.modesPane.updatePlayers(pieces);
 	}
+	
+	public void setEnabled(boolean b) {
+		this.colorChooser.setEnabled(b);
+		this.autoMovesPane.setEnabled(b);
+		this.modesPane.setEnabled(b);
+	}
+	
 	@Override
 	public void onGameStart(Board board, final String gameDesc, List<Piece> pieces, final Piece turn) {
 		// TODO Auto-generated method stub
@@ -140,11 +157,14 @@ public class ControlPanel extends JPanel implements GameObserver {
 
 				ControlPanel.this.messagesBox.setText("Game started: " + gameDesc);
 				ControlPanel.this.messagesBox.append(buildTurnString(turn));
+				onPiecesChange();
+				
 			}
 
 		});
 		
 	}
+	
 	@Override
 	public void onGameOver(Board board, State state, Piece winner) {
 		this.messagesBox.append("Game over: " + state);
@@ -157,23 +177,25 @@ public class ControlPanel extends JPanel implements GameObserver {
 				this.messagesBox.append("The winner is: " + winner);
 			}
 		}
-		this.colorChooser.setEnabled(false);
-		this.autoMovesPane.setEnabled(false);
+		this.setEnabled(false);
 	}
+	
 	@Override
 	public void onMoveStart(Board board, Piece turn) {
 		// TODO Auto-generated method stub
 		
 	}
+	
 	@Override
 	public void onMoveEnd(Board board, Piece turn, boolean success) {
 		// TODO Auto-generated method stub
 		
 	}
+	
 	@Override
 	public void onChangeTurn(Board board, Piece turn) {
 		this.messagesBox.append(buildTurnString(turn));
-		//TODO update control panel (disable buttons or whatever)
+		onPiecesChange();
 	}
 	
 	/**

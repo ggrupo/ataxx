@@ -120,13 +120,13 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	private void initGUI(Observable<GameObserver> g) {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
-		this.boardComponent = createBoard();
-		container.add(boardComponent, BorderLayout.CENTER);
-		g.addObserver(boardComponent);
-		
 		this.controlPanelComponent = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
 		container.add(controlPanelComponent, BorderLayout.LINE_END);
 		g.addObserver(controlPanelComponent);
+		
+		this.boardComponent = createBoard();
+		container.add(boardComponent, BorderLayout.CENTER);
+		g.addObserver(boardComponent);
 		
 		this.setContentPane(container);
 	}

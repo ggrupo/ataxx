@@ -13,6 +13,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.ErrorDialog;
 import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
+import es.ucm.fdi.tp.views.swing.SwingView;
 
 public class ConnectNBoard extends FiniteRectBoardComponent implements GameObserver {
 
@@ -20,10 +21,12 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	
 	protected static final Color PIECE_BG_COLOR = new Color(153,153,153);
 	protected static final Color PIECE_SHADOW_COLOR = new Color(51,51,51,100);
+	final protected SwingView vista;
 	//public static final Color PIECE_HOVER_BG_COLOR = new Color(204,204,204);
 	
-	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
+	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes, SwingView vista) {
 		super(c,colors, playerModes);
+		this.vista=vista;
 	}
 
 
@@ -78,7 +81,8 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	@Override
 	protected void handlePieceLeftClick(int i, int j) {
 		// TODO Make a move
-		new ErrorDialog("Left clicked piece " + i +", " + j, null);
+		//new ErrorDialog("Left clicked piece " + i +", " + j, null);
+		vista.showMessage("You have selected(" + i + "," + j + ")");
 	}
 
 	@Override
@@ -106,5 +110,10 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	public void onChangeTurn(Board board, Piece turn) {
+		if(this.playerModes.get(turn)==PlayerMode.MANUAL){
+			vista.showMessage("choose a box");
+		}
+	}
 }

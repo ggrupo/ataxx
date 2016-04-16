@@ -1,8 +1,8 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -10,8 +10,12 @@ import javax.swing.border.TitledBorder;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.control.Player;
+import es.ucm.fdi.tp.basecode.bgame.model.Board;
+import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
+import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-public class AutomaticMoves extends JPanel implements ActionListener{
+public class AutomaticMoves extends JPanel implements ActionListener, GameObserver {
 
 	private static final long serialVersionUID = 7869356863128774061L;
 	
@@ -22,12 +26,11 @@ public class AutomaticMoves extends JPanel implements ActionListener{
 	private Player randomPlayer;
 	private Player aiPlayer;
 	
-	public AutomaticMoves(Controller c, Player randomPlayer, Player aiPlayer) {
-		super(new FlowLayout());
-		this.cntrl = c;
+	private final Piece WINDOW_OWNER;
 	
-		this.setBorder(new TitledBorder("Automatic Moves"));
-		
+	public AutomaticMoves(Controller c, Player randomPlayer, Player aiPlayer, Piece windowOwner) {
+		this.cntrl = c;
+		this.WINDOW_OWNER = windowOwner;
 		this.randomPlayer = randomPlayer;
 		this.aiPlayer = aiPlayer;
 		
@@ -42,8 +45,9 @@ public class AutomaticMoves extends JPanel implements ActionListener{
 			this.aiButton.addActionListener(this);
 			this.add(aiButton);
 		}
+		
+		this.setBorder(new TitledBorder("Automatic Moves"));
 	}
-	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -61,5 +65,36 @@ public class AutomaticMoves extends JPanel implements ActionListener{
 		randomButton.setEnabled(b);
 		aiButton.setEnabled(b);
 	}
+
+	@Override
+	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		boolean enable = (WINDOW_OWNER == null) || turn.equals(WINDOW_OWNER);
+		this.setEnabled(enable);
+	}
+
+	@Override
+	public void onGameOver(Board board, State state, Piece winner) {
+		this.setEnabled(false);
+	}
+
+	@Override
+	public void onMoveStart(Board board, Piece turn) {
+		this.setEnabled(false);
+	}
+
+	@Override
+	public void onMoveEnd(Board board, Piece turn, boolean success) {
+		boolean enable = (WINDOW_OWNER == null) || turn.equals(WINDOW_OWNER);
+		this.setEnabled(enable);
+	}
+
+	@Override
+	public void onChangeTurn(Board board, Piece turn) {
+		boolean enable = (WINDOW_OWNER == null) || turn.equals(WINDOW_OWNER);
+		this.setEnabled(enable);
+	}
+	
+	@Override
+	public void onError(String msg) {}
 	
 }

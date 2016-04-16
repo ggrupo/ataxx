@@ -2,6 +2,7 @@ package es.ucm.fdi.tp.views.swing.controlpanel;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,18 +32,34 @@ public class ControlPanel extends JPanel implements GameObserver {
 	
 	private final Player randPlayer;
 	private final Player aiPlayer;
-	
-	private List<Piece> pieces;
-	private Board board;
-	
+
+	/**
+	 * Text area where messages eare shown.
+	 * Needed to add messages from the outside.
+	 */
 	private MessagesBox messagesBox;
+	
+	/**
+	 * Table where players information is displayed.
+	 * Needed to add it as observer to the color chooser.
+	 */
 	private PlayersInfoTable infoTable;
+	
+	/**
+	 * Enables the user to change players' colors.
+	 * Needed to add observers to it on color change.
+	 */
 	private ColorChooserPane colorChooser;
-	private PlayerModesPane modesPane;
-	private AutomaticMoves autoMovesPane;
+	
+	/**
+	 * Panel where exit and restart buttons are placed.
+	 * Needed to enable and disable it sometimes.
+	 */
+	private ExitPane exitPane;
 	
 	private final Piece WINDOW_OWNER;
 	
+	private LinkedList<GameObserver> internalObservers = new LinkedList<GameObserver>();
 	
 	public ControlPanel(Controller c, SwingView v, 
 		Map<Piece,SwingView.PlayerMode> playerModes, 
@@ -56,71 +73,8 @@ public class ControlPanel extends JPanel implements GameObserver {
 		this.WINDOW_OWNER = view.getWindowOwner();
 		this.randPlayer = randPlayer;
 		this.aiPlayer = aiPlayer;
-		
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	}
-	
-	final private void initGUI() {
-		addMessagesBox();
-		addPlayerInfoTable();
-		addColorChangePane();
-		addPlayerModesPane();
-		addAutoMovesPane();
-		addExitPane();
-		
-		this.colorChooser.addObserver(this.infoTable);
-		this.colorChooser.addObserver(this.view);
-	}
-	
-	private void addMessagesBox() {
-		messagesBox = new MessagesBox();
-		this.add(messagesBox);
-	}
-	
-	private void addPlayerInfoTable(){
-		this.infoTable = new PlayersInfoTable(board, playerColors, playerModes, pieces);
-		infoTable.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));
-		this.add(infoTable);
-	}
-	
-	private void addColorChangePane() {
-		this.colorChooser = new ColorChooserPane(pieces,playerColors, WINDOW_OWNER);
-		colorChooser.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, colorChooser.getHeight()));
-		this.add(colorChooser);
-	}
-	
-	private void addPlayerModesPane() {
-		byte mode = PlayerModesPane.MANUAL_ONLY;
-		if(randPlayer != null && aiPlayer != null)
-			mode = PlayerModesPane.MANUAL_RANDOM_AI;
-		else if(randPlayer != null)
-			mode = PlayerModesPane.MANUAL_RANDOM;
-		else if(randPlayer != null)
-			mode = PlayerModesPane.MANUAL_AI;
-		
-		this.modesPane = new PlayerModesPane(playerModes, mode, WINDOW_OWNER);
-		modesPane.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, modesPane.getHeight()));
-		this.add(modesPane);
-	}
-	
-	private void addAutoMovesPane() {
-		this.autoMovesPane = new AutomaticMoves(cntrl, randPlayer, aiPlayer);
-		if(randPlayer != null || aiPlayer != null) {
-			autoMovesPane.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, autoMovesPane.getHeight()));
-			this.add(autoMovesPane);
-		}
-	}
-	
-	private void addExitPane() {
-		boolean singleView = view.getWindowOwner() == null;
-		ExitPane exit = new ExitPane(this.cntrl,singleView);
-		exit.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, exit.getHeight()));
-		this.add(exit);
+
+		initGUI();
 	}
 	
 	public void showMessage(String m) {
@@ -130,73 +84,206 @@ public class ControlPanel extends JPanel implements GameObserver {
 			this.messagesBox.setText(null);
 	}
 	
-	public void onPiecesChange() {
-		this.infoTable.refreshTable();
-		this.colorChooser.refresh();
-		this.modesPane.updatePlayers(pieces);
+	private void initGUI() {
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		addMessagesBox();
+		addPlayerInfoTable();
+		addColorChangePane();
+		addPlayerModesPane();
+		addAutoMovesPane();
+		addExitPane();
+		
+		colorChooser.addObserver(this.infoTable);
+		colorChooser.addObserver(this.view);
 	}
 	
-	public void setEnabled(boolean b) {
-		this.colorChooser.setEnabled(b);
-		this.autoMovesPane.setEnabled(b);
-		this.modesPane.setEnabled(b);
+	private void addMessagesBox() {
+		messagesBox = new MessagesBox();
+		this.add(messagesBox);
 	}
+	
+	private void addPlayerInfoTable(){
+		this.infoTable = new PlayersInfoTable(playerColors, playerModes, WINDOW_OWNER);
+		/*infoTable.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, infoTable.getHeight()));*/
+		this.add(infoTable);
+		this.internalObservers.add(infoTable);
+	}
+	
+	private void addColorChangePane() {
+		this.colorChooser = new ColorChooserPane(playerColors);
+		colorChooser.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, colorChooser.getHeight()));
+		this.add(colorChooser);
+		this.internalObservers.add(colorChooser);
+	}
+	
+	private void addPlayerModesPane() {
+		byte mode = PlayerModesPane.MANUAL_ONLY;
+		if(randPlayer != null && aiPlayer != null)
+			mode = PlayerModesPane.MANUAL_RANDOM_AI;
+		else if(randPlayer != null)
+			mode = PlayerModesPane.MANUAL_RANDOM;
+		else if(aiPlayer != null)
+			mode = PlayerModesPane.MANUAL_AI;
+		
+		PlayerModesPane modesPane = new PlayerModesPane(playerModes, mode, WINDOW_OWNER);
+		modesPane.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, modesPane.getHeight()));
+		
+		if(randPlayer != null || aiPlayer != null) {
+			this.add(modesPane);
+			this.internalObservers.add(modesPane);
+		}
+	}
+	
+	private void addAutoMovesPane() {
+		AutomaticMoves autoMovesPane = new AutomaticMoves(cntrl, randPlayer, aiPlayer, WINDOW_OWNER);
+		if(randPlayer != null || aiPlayer != null) {
+			autoMovesPane.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, autoMovesPane.getHeight()));
+			this.add(autoMovesPane);
+			this.internalObservers.add(autoMovesPane);
+		}
+	}
+	
+	private void addExitPane() {
+		boolean singleView = view.getWindowOwner() == null;
+		this.exitPane = new ExitPane(this.cntrl,singleView);
+		exitPane.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, exitPane.getHeight()));
+		this.add(exitPane);
+	}
+	
 	
 	@Override
-	public void onGameStart(Board board, final String gameDesc, List<Piece> pieces, final Piece turn) {
-		// TODO Auto-generated method stub
-		this.board = board;
-		this.pieces = pieces;
+	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
 		SwingUtilities.invokeLater(new Runnable() {
-
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				initGUI();
-				//^^^ Should not be done here
-
-				ControlPanel.this.messagesBox.setText("Game started: " + gameDesc);
-				ControlPanel.this.messagesBox.append(buildTurnString(turn));
-				onPiecesChange();
-				
+				handleGameStart(board, gameDesc, pieces, turn);
 			}
-
 		});
-		
 	}
 	
+	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		messagesBox.setText("Game started: " + gameDesc);
+		messagesBox.append(buildTurnString(turn));
+		
+		notifyGameStart(board, gameDesc, pieces, turn);
+	}
+	
+	private void notifyGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		for(GameObserver o : internalObservers) {
+			o.onGameStart(board, gameDesc, pieces, turn);
+		}
+	}
+	
+	
 	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
-		this.messagesBox.append("Game over: " + state);
+	public void onGameOver(final Board board, final State state, final Piece winner) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameOver(board, state, winner);
+			}
+		});
+	}
+	
+	private void handleGameOver(Board board, State state, Piece winner) {
+		messagesBox.append("Game over: " + state);
 		if(state == State.Draw) {
-			this.messagesBox.append("Draw");
+			messagesBox.append("Draw");
 		} else if(state == State.Won) {
 			if(winner.equals(WINDOW_OWNER)) {
-				this.messagesBox.append("You won");
+				messagesBox.append("You won");
 			} else {
-				this.messagesBox.append("The winner is: " + winner);
+				messagesBox.append("The winner is: " + winner);
 			}
 		}
-		this.setEnabled(false);
-	}
-	
-	@Override
-	public void onMoveStart(Board board, Piece turn) {
-		// TODO Auto-generated method stub
 		
+		notifyGameOver(board, state, winner);
 	}
 	
-	@Override
-	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		// TODO Auto-generated method stub
-		
+	private void notifyGameOver(Board board, State state, Piece winner) {
+		for(GameObserver o : internalObservers) {
+			o.onGameOver(board, state, winner);
+		}
 	}
 	
+	
 	@Override
-	public void onChangeTurn(Board board, Piece turn) {
-		this.messagesBox.append(buildTurnString(turn));
-		onPiecesChange();
+	public void onMoveStart(final Board board, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleMoveStart(board, turn);
+			}
+		});
 	}
+	
+	private void handleMoveStart(Board board, Piece turn) {
+		exitPane.setEnabled(false);
+		notifyMoveStart(board, turn);
+	}
+	
+	private void notifyMoveStart(Board board, Piece turn) {
+		for(GameObserver o : internalObservers) {
+			o.onMoveStart(board, turn);
+		}
+	}
+	
+	
+	@Override
+	public void onMoveEnd(final Board board, final Piece turn, final boolean success) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleMoveEnd(board, turn, success);
+			}
+		});
+	}
+	
+	private void handleMoveEnd(Board board, Piece turn, boolean success) {
+		exitPane.setEnabled(true);
+		notifyMoveEnd(board, turn, success);
+	}
+	
+	private void notifyMoveEnd(Board board, Piece turn, boolean success) {
+		for(GameObserver o : internalObservers) {
+			o.onMoveEnd(board, turn, success);
+		}
+	}
+	
+	
+	@Override
+	public void onChangeTurn(final Board board, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleChangeTurn(board, turn);
+			}
+		});
+	}
+	
+	private void handleChangeTurn(Board board, Piece turn) {
+		messagesBox.append(buildTurnString(turn));
+		notifyChangeTurn(board, turn);
+	}
+	
+	private void notifyChangeTurn(Board board, Piece turn) {
+		for(GameObserver o : internalObservers) {
+			o.onChangeTurn(board, turn);
+		}
+	}
+	
+	
+	@Override
+	public void onError(String msg) {
+		//Errors are not welcome here!
+	}
+	
 	
 	/**
 	 * Builds a String with the turn.
@@ -209,6 +296,4 @@ public class ControlPanel extends JPanel implements GameObserver {
 		}
 	}
 	
-	@Override
-	public void onError(String msg) {}
 }

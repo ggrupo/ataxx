@@ -10,7 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +21,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.Utils;
-import es.ucm.fdi.tp.basecode.bgame.control.*;
+import es.ucm.fdi.tp.basecode.bgame.control.Controller;
+import es.ucm.fdi.tp.basecode.bgame.control.Player;
 import es.ucm.fdi.tp.basecode.bgame.model.*;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanel;
 import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
@@ -39,19 +41,17 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 
 	private static final long serialVersionUID = -5822298297801045598L;
 	
-	protected Controller cntrl;
-	final private Player randPlayer;
-	final private Player aiPlayer;
+	protected final Controller cntrl;
+	private final Player randPlayer;
+	private final Player aiPlayer;
 	private Board board; //A read only board
 	
-	private Piece turn;
-	final private Piece WINDOW_OWNER;
-	final protected Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
-	final protected Map<Piece, PlayerMode> playerModes = new HashMap<Piece, PlayerMode>();
-	protected List<Piece> pieces;
+	private final Piece WINDOW_OWNER;
+	private final Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
+	private final Map<Piece, PlayerMode> playerModes = new HashMap<Piece,PlayerMode>();
 	
 	private ControlPanel controlPanelComponent;
-	protected BoardComponent boardComponent;
+	private BoardComponent boardComponent;
 
 	/**
 	 * Player modes (manual, random, etc.)
@@ -89,7 +89,6 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 		this.aiPlayer = aiPlayer;
 		
 		this.WINDOW_OWNER = localPiece;
-		this.turn = null;
 		
 		initGUI(g);
 		
@@ -132,12 +131,20 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	}
 
 	
-	final public Color getPieceColor(Piece p) { 
+	final protected Color getPieceColor(Piece p) { 
 		return pieceColors.get(p); 
-	} 
+	}
 	
 	final protected Color setPieceColor(Piece p, Color c) { 
 		return pieceColors.put(p,c); 
+	}
+	
+	final protected Map<Piece, Color> getPlayerColors() {
+		return pieceColors;
+	}
+	
+	final protected Map<Piece, PlayerMode> getPlayerModes() {
+		return playerModes;
 	}
 	
 	final protected Board getBoard() {
@@ -162,11 +169,13 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	}
 	
 	protected void initDefaultColors(List<Piece> pieces) {
-		Iterator<Color> colorGen = Utils.colorsGenerator();
 		for(Piece p : pieces) {
-			pieceColors.put(p, colorGen.next());
+			if(!pieceColors.containsKey(p)) {
+				pieceColors.put(p, Utils.randomColor());
+			}
 		}
 	}
+	
 	private void initWindowTitle(String gameDesc) {
 		String owner = WINDOW_OWNER != null ? " (" + WINDOW_OWNER + ")" : "";
 		this.setTitle("Board Games: " + gameDesc + owner);
@@ -177,52 +186,103 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	 * @param pieces
 	 */
 	private void initPlayers(List<Piece> pieces) {
-		this.pieces = pieces;
-		for(Piece p: pieces) {
-			playerModes.put(p, PlayerMode.MANUAL);
+		if(playerModes.isEmpty()) {
+			for(Piece p: pieces) {
+				playerModes.put(p, PlayerMode.MANUAL);
+			}
 		}
 	}
 	
 	
 	@Override
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
-		//Init everything
-		this.turn = turn;
+	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
 		this.board = board;
 		initDefaultColors(pieces);
 		initPlayers(pieces);
-
-		initWindowTitle(gameDesc);
-	}
-
-	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
-		if(state == State.Stopped) {
-			this.setVisible(false);
-			this.dispose();
-		}
-	}
-
-	@Override
-	public void onMoveStart(Board board, Piece turn) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		redrawBoard();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameStart(board, gameDesc, pieces, turn);
+			}
+		});
 	}
 	
-	@Override
-	public void onChangeTurn(Board board, Piece turn) {
-		this.turn = turn;
-		//TODO update board view
+	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		initWindowTitle(gameDesc);
+		
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
 			this.toFront();
 		}
 	}
+
+	
+	@Override
+	public void onGameOver(final Board board, final State state, final Piece winner) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameOver(board, state, winner);
+			}
+		});
+	}
+	
+	private void handleGameOver(Board board, State state, Piece winner) {
+		if(state == State.Stopped) {
+			this.setVisible(false);
+			this.dispose();
+		}
+	}
+	
+	
+	@Override
+	public void onMoveStart(final Board board, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleMoveStart(board, turn);
+			}
+		});
+	}
+	
+	private void handleMoveStart(Board board, Piece turn) {
+		
+	}
+	
+	
+	@Override
+	public void onMoveEnd(final Board board, final Piece turn, final boolean success) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleMoveEnd(board, turn, success);
+			}
+		});
+	}
+	
+	private void handleMoveEnd(Board board, Piece turn, boolean success) {
+		redrawBoard();
+	}
+	
+	
+	@Override
+	public void onChangeTurn(final Board board, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleChangeTurn(board, turn);
+			}
+		});
+	}
+	
+	private void handleChangeTurn(Board board, Piece turn) {
+		if(turn.equals(WINDOW_OWNER)) {
+			this.requestFocus(true);
+			this.toFront();
+		}
+	}
+	
 
 	@Override
 	public void onError(String msg) {

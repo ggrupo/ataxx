@@ -15,42 +15,35 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import es.ucm.fdi.tp.basecode.bgame.model.Board;
+import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-public class ColorChooserPane extends JPanel implements ActionListener, Observable<ColorChangeObserver>{
+public class ColorChooserPane extends JPanel implements ActionListener, Observable<ColorChangeObserver>, GameObserver {
 
 	private static final long serialVersionUID = 111272096861569383L;
 	
 	protected Map<Piece, Color> colorList;
 	protected final Window parentWindow;
 	
-	private JComboBox<Object> piecesCombo;
+	private JComboBox<Piece> piecesCombo;
 	private final JButton changeColorBtn;
 	
-	private final List<Piece> pieces;
-	
-	private final Piece WINDOW_OWNER;
+	private List<Piece> pieces;
 	
 	/**
 	 * List of observers.
 	 */
 	private ArrayList<ColorChangeObserver> observers = new ArrayList<ColorChangeObserver>(4); //should be static?
 	
-	public ColorChooserPane(List<Piece> pieces, Map<Piece, Color> pieceColors, final Piece windowOwner) {
+	public ColorChooserPane(Map<Piece, Color> pieceColors) {
 		this.colorList = pieceColors;
-		//this.parentFrame = parent;
-		this.pieces = pieces;
-		this.WINDOW_OWNER = windowOwner;
 		
-		if(WINDOW_OWNER == null) {
-			piecesCombo = new JComboBox<Object>(pieces.toArray());
-			this.add(piecesCombo);
-		} else {
-			piecesCombo = new JComboBox<Object>();
-			piecesCombo.addItem(WINDOW_OWNER);
-			//combobox object not added to the layout
-		}
+		piecesCombo = new JComboBox<Piece>();
+		this.add(piecesCombo);
+
 		changeColorBtn = new JButton("Choose color");
 		changeColorBtn.addActionListener(this);
 		this.add(changeColorBtn);
@@ -82,11 +75,9 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	}
 	
 	public void refresh() {
-		if(WINDOW_OWNER == null) {
-			piecesCombo.removeAllItems();
-			for(Piece p : pieces) {
-				piecesCombo.addItem(p);
-			}
+		piecesCombo.removeAllItems();
+		for(Piece p : pieces) {
+			piecesCombo.addItem(p);
 		}
 	}
 	
@@ -111,5 +102,31 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 			o.onColorChange(player,newColor);
 		}
 	}
+
+	@Override
+	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		this.pieces = pieces;
+		this.refresh();
+		this.setEnabled(true);
+	}
+
+	@Override
+	public void onGameOver(Board board, State state, Piece winner) {
+		this.setEnabled(false);
+	}
+
+	@Override
+	public void onMoveStart(Board board, Piece turn) {}
+
+	@Override
+	public void onMoveEnd(Board board, Piece turn, boolean success) {}
+
+	@Override
+	public void onChangeTurn(Board board, Piece turn) {
+		this.refresh();
+	}
+
+	@Override
+	public void onError(String msg) {}
 
 }

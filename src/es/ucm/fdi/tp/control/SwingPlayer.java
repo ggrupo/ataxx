@@ -25,7 +25,7 @@ public class SwingPlayer extends Player {
 	}
 	
 	public void setMove(GameMove newMove) {
-		this.move = move;
+		this.move = newMove;
 	}
 	
 	public GameMove getMove() {

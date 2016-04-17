@@ -56,11 +56,9 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 			}
 		};
 		
-		this.table.setEnabled(false);
-		this.table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		formatScrollPane();
+		this.add(table);
 		
-		this.add(this.table);
-		this.setBorder(new TitledBorder("Players information"));
 	}
 
 	public void refreshTable() {
@@ -171,8 +169,22 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 	
 	private void resetMinimumSize() {
 		Dimension d = new Dimension(table.getPreferredSize());
-		d.height += 32;
+		d.height += 48;
 		this.setMinimumSize(d);
+	}
+	
+	/**
+	 * Eye-candy properties for the pane.
+	 */
+	private void formatScrollPane() {
+		//Disable user input
+		this.table.setEnabled(false);
+		//Adjust viewport size
+		this.table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		//Hide scrollbars
+		this.getVerticalScrollBar().setPreferredSize (new Dimension(0,0));
+		//Add titled border
+		this.setBorder(new TitledBorder("Players information"));
 	}
 	
 }

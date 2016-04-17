@@ -17,11 +17,12 @@ import javax.swing.border.TitledBorder;
 
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
+import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-public class ColorChooserPane extends JPanel implements ActionListener, Observable<ColorChangeObserver>, GameObserver {
+public class ColorChooserPane extends JPanel implements ActionListener, Observable<ControlPanelObserver>, GameObserver {
 
 	private static final long serialVersionUID = 111272096861569383L;
 	
@@ -36,7 +37,7 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	/**
 	 * List of observers.
 	 */
-	private ArrayList<ColorChangeObserver> observers = new ArrayList<ColorChangeObserver>(4); //should be static?
+	private ArrayList<ControlPanelObserver> observers = new ArrayList<ControlPanelObserver>(4); //should be static?
 	
 	public ColorChooserPane(Map<Piece, Color> pieceColors) {
 		this.colorList = pieceColors;
@@ -87,18 +88,18 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	 * observers are notified.
 	 */
 	@Override
-	public void addObserver(ColorChangeObserver o) {
+	public void addObserver(ControlPanelObserver o) {
 		observers.add(o);
 		
 	}
 
 	@Override
-	public void removeObserver(ColorChangeObserver o) {
+	public void removeObserver(ControlPanelObserver o) {
 		observers.remove(o);
 	}
 	
 	private void notifyColorChange(Piece player, Color newColor) {
-		for (ColorChangeObserver o : observers) {
+		for (ControlPanelObserver o : observers) {
 			o.onColorChange(player,newColor);
 		}
 	}

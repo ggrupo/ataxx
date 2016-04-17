@@ -1,23 +1,27 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
+import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
 import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 
-public class PlayerModesPane extends JPanel implements ActionListener, GameObserver {
+public class PlayerModesPane extends JPanel implements ActionListener, GameObserver, Observable<ControlPanelObserver> {
 	
 	private static final long serialVersionUID = 7482372784681144842L;
 	
@@ -38,6 +42,11 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	
 	protected final boolean canChangePlayer;
 	protected final byte MODE;
+	
+	/**
+	 * List of observers.
+	 */
+	private ArrayList<ControlPanelObserver> observers = new ArrayList<ControlPanelObserver>(4);
 
 	public PlayerModesPane(Map<Piece,PlayerMode> playerModes, byte mode, final Piece windowOwner) {
 		this.playerModes = playerModes;
@@ -57,7 +66,7 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		playerModes.put(selectedPlayer, selectedMode);
-		
+		notifyModeChange(selectedPlayer, selectedMode);
 	}
 	
 	private void buildPieceList(final Piece windowOwner) {
@@ -73,6 +82,7 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 			this.add(playersCombo);
 			
 		} else {
+			this.add(new JLabel(windowOwner + ": "));
 			selectedPlayer = windowOwner;
 		}
 	}
@@ -152,4 +162,26 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 
 	@Override
 	public void onError(String msg) {}
+
+	
+	/**
+	 * Adds a player mode change observer. When the color of a player is changed all
+	 * observers are notified.
+	 */
+	@Override
+	public void addObserver(ControlPanelObserver o) {
+		observers.add(o);
+		
+	}
+
+	@Override
+	public void removeObserver(ControlPanelObserver o) {
+		observers.remove(o);
+	}
+	
+	private void notifyModeChange(Piece player, PlayerMode newMode) {
+		for (ControlPanelObserver o : observers) {
+			o.onPlayerModesChange(player, newMode);
+		}
+	}
 }

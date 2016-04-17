@@ -8,10 +8,8 @@ import java.util.Map;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
-import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.views.swing.ErrorDialog;
 import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 import es.ucm.fdi.tp.views.swing.SwingView;
 
@@ -120,5 +118,11 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		super.onGameStart(board, gameDesc, pieces, turn);
 		vista.showMessage("choose a box");
+	}
+
+
+	@Override
+	public void onPlayerModesChange(Piece player, PlayerMode newMode) {
+		
 	}
 }

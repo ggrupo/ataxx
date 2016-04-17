@@ -17,9 +17,9 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
-import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
+import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 
-public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver, GameObserver {
+public class PlayersInfoTable extends VScrollPane implements ControlPanelObserver, GameObserver {
 
 	private static final long serialVersionUID = 1771957667026716116L;
 	
@@ -102,7 +102,7 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 		
 		public void addPlayer(Piece p) {
 			Integer pCount = board.getPieceCount(p);
-			String pMode = "Unknown";
+			String pMode = " - ";
 			if(WINDOW_OWNER == null || p.equals(WINDOW_OWNER)) {
 				pMode = playerModes.get(p).getDesc();
 			}
@@ -128,7 +128,11 @@ public class PlayersInfoTable extends VScrollPane implements ColorChangeObserver
 	
 	@Override
 	public void onColorChange(Piece player, Color newColor) {
-		table.repaint();
+		refreshTable();
+	}
+	
+	@Override
+	public void onPlayerModesChange(Piece player, PlayerMode newMode) {
 		refreshTable();
 	}
 

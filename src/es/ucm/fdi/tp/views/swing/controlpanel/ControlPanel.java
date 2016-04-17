@@ -51,6 +51,12 @@ public class ControlPanel extends JPanel implements GameObserver {
 	 * Needed to add observers to it on color change.
 	 */
 	private ColorChooserPane colorChooser;
+	
+	/**
+	 * Enables the user to change players' modes.
+	 * Needed to add observers to it on mode change.
+	 */
+	private PlayerModesPane playerModesPanel;
 
 	private LinkedList<GameObserver> internalObservers = new LinkedList<GameObserver>();
 	
@@ -89,6 +95,8 @@ public class ControlPanel extends JPanel implements GameObserver {
 		
 		colorChooser.addObserver(this.infoTable);
 		colorChooser.addObserver(this.view);
+		playerModesPanel.addObserver(this.infoTable);
+		playerModesPanel.addObserver(this.view);
 	}
 	
 	private void addMessagesBox() {
@@ -121,13 +129,13 @@ public class ControlPanel extends JPanel implements GameObserver {
 		else if(aiPlayer != null)
 			mode = PlayerModesPane.MANUAL_AI;
 		
-		PlayerModesPane modesPane = new PlayerModesPane(playerModes, mode, WINDOW_OWNER);
-		modesPane.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, modesPane.getHeight()));
+		this.playerModesPanel = new PlayerModesPane(playerModes, mode, WINDOW_OWNER);
+		playerModesPanel.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, playerModesPanel.getHeight()));
 		
 		if(randPlayer != null || aiPlayer != null) {
-			this.add(modesPane);
-			this.internalObservers.add(modesPane);
+			this.add(playerModesPanel);
+			this.internalObservers.add(playerModesPanel);
 		}
 	}
 	

@@ -30,10 +30,10 @@ import es.ucm.fdi.tp.basecode.bgame.model.*;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
+import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanel;
-import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
 
-public abstract class SwingView extends JFrame implements GameObserver, ColorChangeObserver {
+public abstract class SwingView extends JFrame implements GameObserver, ControlPanelObserver {
 	
 	static {
 		setDefaultLookAndFeel();
@@ -313,6 +313,11 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	@Override
 	public void onColorChange(Piece player, Color newColor) {
 		this.boardComponent.onColorChange(player, newColor);
+	}
+	
+	@Override
+	public void onPlayerModesChange(Piece player, PlayerMode newMode) {
+		this.boardComponent.onPlayerModesChange(player, newMode);
 	}
 	
 	@Override

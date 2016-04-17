@@ -16,9 +16,9 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
-import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChangeObserver;
+import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;;
 
-public abstract class BoardComponent extends JPanel implements GameObserver, ColorChangeObserver, MouseListener {
+public abstract class BoardComponent extends JPanel implements GameObserver, ControlPanelObserver, MouseListener {
 
 	private static final long serialVersionUID = -7727802925463521690L;
 	

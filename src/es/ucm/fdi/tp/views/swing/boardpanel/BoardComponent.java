@@ -96,7 +96,7 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	public void mouseReleased(MouseEvent e) {}
 
 	@Override
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -112,7 +112,7 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	}
 	
 	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
+	public void onGameOver(final Board board, final State state, final Piece winner) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -131,7 +131,7 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 	}
 
 	@Override
-	public void onChangeTurn(Board board, Piece turn) {
+	public void onChangeTurn(final Board board, final Piece turn) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

@@ -1,6 +1,5 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	private Piece selectedPlayer;
 	private PlayerMode selectedMode;
 	
-	protected final boolean canChangePlayer;
 	protected final byte MODE;
 	
 	/**
@@ -51,7 +49,6 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	public PlayerModesPane(Map<Piece,PlayerMode> playerModes, byte mode, final Piece windowOwner) {
 		this.playerModes = playerModes;
 		this.MODE = mode;
-		this.canChangePlayer = (windowOwner == null);
 		
 		buildPieceList(windowOwner);
 		buildModeList();
@@ -70,7 +67,7 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	}
 	
 	private void buildPieceList(final Piece windowOwner) {
-		if(canChangePlayer) {
+		if(windowOwner == null) {
 			this.playersCombo = new JComboBox<Piece>();
 			
 			playersCombo.addActionListener(new ActionListener() {
@@ -108,17 +105,17 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 					
 				}
 			});
-		} else {
-			selectedMode = PlayerMode.MANUAL;
 		}
+		selectedMode = PlayerMode.MANUAL;
 	}
 	
 	private void updatePlayers() {
-		if(canChangePlayer) {
-			this.playersCombo.removeAllItems();
+		if(playersCombo != null) {
+			playersCombo.removeAllItems();
 			for(Piece p : pieces) {
 				playersCombo.addItem(p);
 			}
+			selectedPlayer = (Piece) playersCombo.getSelectedItem();
 		}
 	}
 	
@@ -132,7 +129,7 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 		if((MODE & MANUAL_AI) != 0) {
 			modesCombo.setEnabled(b);
 		}
-		if(canChangePlayer) {
+		if(playersCombo != null) {
 			playersCombo.setEnabled(b);
 		}
 	}

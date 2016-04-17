@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
@@ -30,8 +29,8 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	private final int MARGIN_GAP;
 	
 
-	protected FiniteRectBoardComponent(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
-		super(c, colors, playerModes);
+	protected FiniteRectBoardComponent(Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
+		super(colors, playerModes);
 		this.MARGIN_GAP = getMargin();
 	}
 	

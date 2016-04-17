@@ -42,7 +42,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	private static final long serialVersionUID = -5822298297801045598L;
 	
 	private Observable<GameObserver> model;
-	protected final Controller cntrl;
+	private Controller cntrl;
 	private final Player randPlayer;
 	private final Player aiPlayer;
 	private Board board; //A read only board
@@ -162,6 +162,52 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		this.controlPanel.showMessage(m);
 	}
 	
+	protected final boolean requestPlayerMove(Player p) {
+		try {
+			cntrl.makeMove(p);
+		} catch (GameError e) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean requestAutomaticMove() {
+		PlayerMode turnMode = playerModes.get(turn);
+		boolean success = true;
+		try {
+			if(turnMode == PlayerMode.RANDOM) {
+				requestRandomMove();
+			} else if(turnMode == PlayerMode.AI) {
+				requestAIMove();
+			} else {
+				success = false;
+			}
+		} catch(GameError e) {
+			success = false;
+		}
+		return success;
+	}
+	
+	private void requestRandomMove() {
+		if(randPlayer == null) {
+			String errorMessage = PlayerMode.RANDOM + " mode is not supported by this game. ";
+			onError(errorMessage);
+			throw new GameError(errorMessage);
+		}
+		
+		this.cntrl.makeMove(randPlayer);
+	}
+	
+	private void requestAIMove() {
+		if(aiPlayer == null) {
+			String errorMessage = PlayerMode.AI + " mode is not supported by this game. ";
+			onError(errorMessage);
+			throw new GameError(errorMessage);
+		}
+		
+		this.cntrl.makeMove(aiPlayer);
+	}
+	
 	/**
 	 * Closes the game after asking for confirmation.
 	 */
@@ -217,11 +263,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		initBoard();
 		initWindowTitle(gameDesc);
 		
-		this.turn = turn;
-		if(turn.equals(WINDOW_OWNER)) {
-			this.requestFocus(true);
-			this.toFront();
-		}
+		handleChangeTurn(board, turn);
 	}
 
 	
@@ -289,13 +331,28 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 			this.requestFocus(true);
 			this.toFront();
 		}
+		requestAutomaticMove();
 	}
-	
 
 	@Override
 	public void onError(String msg) {
 		new ErrorDialog(msg, this);
 	}
+	
+	
+	@Override
+	public void onColorChange(Piece player, Color newColor) {
+		boardComponent.onColorChange(player, newColor);
+	}
+	
+	@Override
+	public void onPlayerModesChange(Piece player, PlayerMode newMode) {
+		if(player.equals(turn)) {
+			requestAutomaticMove();
+		}
+		boardComponent.onPlayerModesChange(player, newMode);
+	}
+	
 	
 	private void setDefaultWindowSize() {
 		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
@@ -313,15 +370,6 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		}
 	}
 
-	@Override
-	public void onColorChange(Piece player, Color newColor) {
-		this.boardComponent.onColorChange(player, newColor);
-	}
-	
-	@Override
-	public void onPlayerModesChange(Piece player, PlayerMode newMode) {
-		this.boardComponent.onPlayerModesChange(player, newMode);
-	}
 	
 	@Override
 	public JRootPane createRootPane() {

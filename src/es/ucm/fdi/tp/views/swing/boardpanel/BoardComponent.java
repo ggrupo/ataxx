@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
@@ -26,15 +25,13 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Con
 	
 	protected boolean enabled = true;
 	
-	final protected Controller cntrl;
 	final protected Map<Piece,Color> pieceColors;
 	final protected Map<Piece,PlayerMode> playerModes;
 	
 	private Board board;
 	
 	
-	protected BoardComponent(Controller c, Map<Piece,Color> colors, Map<Piece, PlayerMode> playerModes) {
-		this.cntrl = c;
+	protected BoardComponent(Map<Piece,Color> colors, Map<Piece, PlayerMode> playerModes) {
 		this.pieceColors = colors;
 		this.playerModes = playerModes;
 		
@@ -141,10 +138,20 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Con
 	}
 	
 	private void handleChangeTurn(Board board, Piece turn) {
-		if(this.playerModes.get(turn)==PlayerMode.MANUAL){
-			this.setEnabled(true);
-		}
-		else
-			this.setEnabled(false);
+		//TODO - this isn't ok. Needs to check wether the owner is in their turn
+		boolean enable = playerModes.get(turn)==PlayerMode.MANUAL;
+		this.setEnabled(enable);
+	}
+	
+	@Override
+	public void onMoveStart(Board board, Piece turn) {
+		this.setEnabled(false);
+	}
+
+	@Override
+	public void onMoveEnd(Board board, Piece turn, boolean success) {
+		//TODO - this isn't ok. Needs to check wether the owner is in their turn
+		boolean enable = playerModes.get(turn)==PlayerMode.MANUAL;
+		this.setEnabled(enable);
 	}
 }

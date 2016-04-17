@@ -46,6 +46,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	private final Player aiPlayer;
 	private Board board; //A read only board
 	
+	private Piece turn;
 	private final Piece WINDOW_OWNER;
 	private final Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
 	private final Map<Piece, PlayerMode> playerModes = new HashMap<Piece,PlayerMode>();
@@ -163,8 +164,10 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	 * Closes the game after asking for confirmation.
 	 */
 	public void closeGame() {
-		if((new QuitDialog(SwingView.this)).getValue()) {
-			SwingView.this.cntrl.stop();
+		if(WINDOW_OWNER == null || turn.equals(WINDOW_OWNER)) {
+			if((new QuitDialog(SwingView.this)).getValue()) {
+				SwingView.this.cntrl.stop();
+			}
 		}
 	}
 	
@@ -211,6 +214,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		initWindowTitle(gameDesc);
 		
+		this.turn = turn;
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
 			this.toFront();
@@ -277,6 +281,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ColorCha
 	}
 	
 	private void handleChangeTurn(Board board, Piece turn) {
+		this.turn = turn;
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
 			this.toFront();

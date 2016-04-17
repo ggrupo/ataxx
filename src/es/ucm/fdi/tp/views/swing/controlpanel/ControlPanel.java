@@ -32,6 +32,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	
 	private final Player randPlayer;
 	private final Player aiPlayer;
+	private final Piece WINDOW_OWNER;
 
 	/**
 	 * Text area where messages eare shown.
@@ -50,15 +51,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	 * Needed to add observers to it on color change.
 	 */
 	private ColorChooserPane colorChooser;
-	
-	/**
-	 * Panel where exit and restart buttons are placed.
-	 * Needed to enable and disable it sometimes.
-	 */
-	private ExitPane exitPane;
-	
-	private final Piece WINDOW_OWNER;
-	
+
 	private LinkedList<GameObserver> internalObservers = new LinkedList<GameObserver>();
 	
 	public ControlPanel(Controller c, SwingView v, 
@@ -149,11 +142,11 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addExitPane() {
-		boolean singleView = view.getWindowOwner() == null;
-		this.exitPane = new ExitPane(this.cntrl,singleView);
-		exitPane.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, exitPane.getHeight()));
-		this.add(exitPane);
+		ExitPanel exit = new ExitPanel(this.cntrl,WINDOW_OWNER);
+		exit.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, exit.getHeight()));
+		this.add(exit);
+		this.internalObservers.add(exit);
 	}
 	
 	
@@ -224,7 +217,6 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void handleMoveStart(Board board, Piece turn) {
-		exitPane.setEnabled(false);
 		notifyMoveStart(board, turn);
 	}
 	
@@ -246,7 +238,6 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void handleMoveEnd(Board board, Piece turn, boolean success) {
-		exitPane.setEnabled(true);
 		notifyMoveEnd(board, turn, success);
 	}
 	

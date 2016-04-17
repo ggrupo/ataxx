@@ -1,4 +1,4 @@
-package es.ucm.fdi.tp.views.swing.boardpanel;
+package es.ucm.fdi.tp.connectn;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,7 +12,10 @@ import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
+import es.ucm.fdi.tp.basecode.connectn.ConnectNMove;
+import es.ucm.fdi.tp.control.SwingPlayer;
 import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
+import es.ucm.fdi.tp.views.swing.boardpanel.FiniteRectBoardComponent;
 import es.ucm.fdi.tp.views.swing.SwingView;
 
 public class ConnectNBoard extends FiniteRectBoardComponent implements GameObserver {
@@ -23,13 +26,16 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	protected static final Color PIECE_SHADOW_COLOR = new Color(51,51,51,100);
 	
 	private SwingView view;
+	private SwingPlayer jugador;
+	private Piece turno;
 	
 	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes, SwingView v) {
 		super(c,colors, playerModes);
 		this.view = v;
 	}
 
-
+//---------------- metodos de pintar--------------------------
+	
 	@Override
 	public void redraw() {
 		this.repaint();
@@ -74,7 +80,19 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 			
 		} catch (NullPointerException e) {}
 	}
+	
+	@Override
+	protected int getMargin() {
+		return 4;
+	}
 
+	
+	
+	
+	
+	
+	//-----------------------------eventos-------------------------------------------------
+	
 	@Override
 	protected void handlePieceRightClick(int i, int j) {}
 
@@ -83,11 +101,9 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 		// TODO Make a move
 		//new ErrorDialog("Left clicked piece " + i +", " + j, null);
 		view.showMessage("You have selected(" + i + "," + j + ")");
-	}
-
-	@Override
-	protected int getMargin() {
-		return 4;
+		if(view.getWindowOwner()==turno || view.getWindowOwner()==null){
+			jugador.setMove(new ConnectNMove(i, j, turno));
+		};
 	}
 
 
@@ -112,6 +128,7 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	}
 	
 	public void onChangeTurn(final Board board, final Piece turn) {
+		turno=turn;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -122,7 +139,7 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	
 	private void handleChangeTurn(Board board, Piece turn) {
 		super.onChangeTurn(board, turn);
-		view.showMessage("Click on a cell");
+		view.showMessage("Click on a cell"); //tiene que comprobar que es el turno de un jugador manual
 	}
 	
 	@Override

@@ -7,7 +7,6 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.FiniteRectBoardSwingView;
-import es.ucm.fdi.tp.views.swing.boardpanel.ConnectNBoard;
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 
 public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameObserver {
@@ -31,5 +30,7 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameO
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }

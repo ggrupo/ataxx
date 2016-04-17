@@ -116,4 +116,9 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 			vista.showMessage("choose a box");
 		}
 	}
+	
+	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		super.onGameStart(board, gameDesc, pieces, turn);
+		vista.showMessage("choose a box");
+	}
 }

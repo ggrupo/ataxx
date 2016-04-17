@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
@@ -96,13 +97,31 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 
 	@Override
 	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameStart(board, gameDesc, pieces, turn);
+			}
+		});
+	}
+
+	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn){
 		this.board = board;
 		this.setEnabled(true);
 		redraw();
 	}
-
+	
 	@Override
 	public void onGameOver(Board board, State state, Piece winner) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameOver(board, state, winner);
+			}
+		});
+	}
+	
+	private void handleGameOver(Board board, State state, Piece winner) {
 		this.setEnabled(false);
 	}
 	
@@ -113,6 +132,15 @@ public abstract class BoardComponent extends JPanel implements GameObserver, Col
 
 	@Override
 	public void onChangeTurn(Board board, Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleChangeTurn(board, turn);
+			}
+		});
+	}
+	
+	private void handleChangeTurn(Board board, Piece turn) {
 		if(this.playerModes.get(turn)==PlayerMode.MANUAL){
 			this.setEnabled(true);
 		}

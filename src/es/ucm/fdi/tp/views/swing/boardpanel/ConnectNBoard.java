@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
@@ -19,12 +21,12 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	
 	protected static final Color PIECE_BG_COLOR = new Color(153,153,153);
 	protected static final Color PIECE_SHADOW_COLOR = new Color(51,51,51,100);
-	final protected SwingView vista;
-	//public static final Color PIECE_HOVER_BG_COLOR = new Color(204,204,204);
 	
-	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes, SwingView vista) {
+	private SwingView view;
+	
+	public ConnectNBoard(Controller c, Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes, SwingView v) {
 		super(c,colors, playerModes);
-		this.vista=vista;
+		this.view = v;
 	}
 
 
@@ -80,7 +82,7 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 	protected void handlePieceLeftClick(int i, int j) {
 		// TODO Make a move
 		//new ErrorDialog("Left clicked piece " + i +", " + j, null);
-		vista.showMessage("You have selected(" + i + "," + j + ")");
+		view.showMessage("You have selected(" + i + "," + j + ")");
 	}
 
 	@Override
@@ -109,15 +111,33 @@ public class ConnectNBoard extends FiniteRectBoardComponent implements GameObser
 		
 	}
 	
-	public void onChangeTurn(Board board, Piece turn) {
-		if(this.playerModes.get(turn)==PlayerMode.MANUAL){
-			vista.showMessage("choose a box");
-		}
+	public void onChangeTurn(final Board board, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleChangeTurn(board, turn);
+			}
+		});
 	}
 	
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+	private void handleChangeTurn(Board board, Piece turn) {
+		super.onChangeTurn(board, turn);
+		view.showMessage("Click on a cell");
+	}
+	
+	@Override
+	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameStart(board, gameDesc, pieces, turn);
+			}
+		});
+	}
+	
+	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		super.onGameStart(board, gameDesc, pieces, turn);
-		vista.showMessage("choose a box");
+		view.showMessage("Click on a cell");
 	}
 
 

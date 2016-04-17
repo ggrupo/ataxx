@@ -41,6 +41,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 
 	private static final long serialVersionUID = -5822298297801045598L;
 	
+	private Observable<GameObserver> model;
 	protected final Controller cntrl;
 	private final Player randPlayer;
 	private final Player aiPlayer;
@@ -51,7 +52,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	private final Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
 	private final Map<Piece, PlayerMode> playerModes = new HashMap<Piece,PlayerMode>();
 	
-	private ControlPanel controlPanelComponent;
+	private ControlPanel controlPanel;
 	private BoardComponent boardComponent;
 
 	/**
@@ -82,16 +83,18 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		}
 	}
 	
-	public SwingView(Observable<GameObserver> g, Controller c, Piece localPiece, 
+	public SwingView(final Observable<GameObserver> g, Controller c, Piece localPiece, 
 			Player randPlayer, Player aiPlayer)
 	{
 		this.cntrl= c;
 		this.randPlayer = randPlayer;
 		this.aiPlayer = aiPlayer;
+		this.model = g;
 		
 		this.WINDOW_OWNER = localPiece;
 		
-		initGUI(g);
+		initGUI();
+		g.addObserver(SwingView.this);
 		
 		this.setDefaultWindowSize();
 		this.setLocationByPlatform(true);
@@ -99,17 +102,12 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		//Exit dialog before closing the windows
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
-			
 			@Override
 			public void windowClosing(WindowEvent e) {
 				closeGame();
 			}
 		});
-		
-		g.addObserver(this);
 	}
-	
-	public abstract void setEnabled(boolean b);
 	
 	protected abstract BoardComponent createBoard();
 	
@@ -117,18 +115,22 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		this.boardComponent.redraw();
 	}
 	
-	private void initGUI(Observable<GameObserver> g) {
+	private void initGUI() {
 		JPanel container = new JPanel(new BorderLayout(0,0));
 		
-		this.controlPanelComponent = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
-		container.add(controlPanelComponent, BorderLayout.LINE_END);
-		g.addObserver(controlPanelComponent);
-		
-		this.boardComponent = createBoard();
-		container.add(boardComponent, BorderLayout.CENTER);
-		g.addObserver(boardComponent);
-		
+		this.controlPanel = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
+		container.add(controlPanel, BorderLayout.LINE_END);
+		model.addObserver(controlPanel);
+
 		this.setContentPane(container);
+	}
+	
+	private void initBoard() {
+		if(boardComponent == null) {
+			this.boardComponent = createBoard();
+			getContentPane().add(boardComponent, BorderLayout.CENTER);
+			model.addObserver(boardComponent);
+		}
 	}
 
 	
@@ -157,7 +159,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	}
 	
 	final public void showMessage(String m) {
-		this.controlPanelComponent.showMessage(m);
+		this.controlPanel.showMessage(m);
 	}
 	
 	/**
@@ -212,6 +214,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	}
 	
 	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+		initBoard();
 		initWindowTitle(gameDesc);
 		
 		this.turn = turn;

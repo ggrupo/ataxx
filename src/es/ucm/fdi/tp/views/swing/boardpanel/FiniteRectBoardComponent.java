@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
@@ -41,13 +43,20 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		calcMetrics();
-		
-		for(int i=0, y=vMargin; i<rows; i++, y+=pieceSize + MARGIN_GAP) {
-			for(int j=0,x=hMargin; j<cols; j++, x+=pieceSize + MARGIN_GAP) {
-				paintPiece(g, i, j, x, y, pieceSize);
+		try {
+			
+			calcMetrics();
+			
+			for(int i=0, y=vMargin; i<rows; i++, y+=pieceSize + MARGIN_GAP) {
+				for(int j=0,x=hMargin; j<cols; j++, x+=pieceSize + MARGIN_GAP) {
+					paintPiece(g, i, j, x, y, pieceSize);
+				}
 			}
+			
+		} catch (RuntimeException e) {
+			//Do not draw if any exception is found
+			//Mostly arithmetic and null pointer exceptions due to
+			//values don't initialize until on game start
 		}
 		
 	}
@@ -61,21 +70,23 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	}
 	
 	private void calcMetrics() {
-		calcPieceSize();
-		centerBoard();
-	}
-	
-	private void centerBoard() {
-		this.vMargin = (getHeight() - (pieceSize+MARGIN_GAP)*rows -MARGIN_GAP )/2 + MARGIN_GAP;
-		this.hMargin = (getWidth() - (pieceSize+MARGIN_GAP)*cols -MARGIN_GAP )/2 + MARGIN_GAP;
-	}
-	
-	private void calcPieceSize() {
 		this.pieceSize = Math.min((getWidth()-MARGIN_GAP)/cols, (getHeight()-MARGIN_GAP)/rows) - MARGIN_GAP;
+		
+		this.vMargin = (getHeight() - (pieceSize+MARGIN_GAP)*rows - MARGIN_GAP )/2 + MARGIN_GAP;
+		this.hMargin = (getWidth() - (pieceSize+MARGIN_GAP)*cols - MARGIN_GAP )/2 + MARGIN_GAP;
 	}
 	
 	@Override
-	public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
+	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameStart(board, gameDesc, pieces, turn);
+			}
+		});
+	}
+	
+	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		super.onGameStart(board, gameDesc, pieces, turn);
 		this.rows = board.getRows();
 		this.cols = board.getCols();

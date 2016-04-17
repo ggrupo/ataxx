@@ -58,7 +58,7 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 		
 		this.table.setEnabled(false);
 		this.table.setPreferredScrollableViewportSize(table.getPreferredSize());
-		this.setMinimumSize(new Dimension(100, 100));
+		
 		this.add(this.table);
 		this.setBorder(new TitledBorder("Players information"));
 	}
@@ -142,6 +142,7 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 		this.board = board;
 		
 		refreshTable();
+		resetMinimumSize();
 	}
 	
 	@Override
@@ -160,5 +161,18 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 
 	@Override
 	public void onError(String msg) {}
+	
+	//Overriden to avoid the panel be covered by the textarea over it
+	//It just does the work
+	@Override
+	public Dimension getPreferredSize() {
+		return getMinimumSize();
+	}
+	
+	private void resetMinimumSize() {
+		Dimension d = new Dimension(table.getPreferredSize());
+		d.height += 32;
+		this.setMinimumSize(d);
+	}
 	
 }

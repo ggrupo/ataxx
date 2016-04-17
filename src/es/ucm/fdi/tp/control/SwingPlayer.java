@@ -18,7 +18,7 @@ public class SwingPlayer extends Player {
 	
 	@Override
 	public GameMove requestMove(Piece p, Board board, List<Piece> pieces, GameRules rules) {
-		if(p.equals(move.getPiece()) {
+		if(p.equals(move.getPiece())) {
 			return this.move;
 		}
 		return null;

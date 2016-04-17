@@ -12,7 +12,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import es.ucm.fdi.tp.ataxx.AtaxxFactory;
+import es.ucm.fdi.tp.ataxx.AtaxxFactoryExt;
 import es.ucm.fdi.tp.basecode.attt.AdvancedTTTFactory;
 import es.ucm.fdi.tp.basecode.bgame.control.ConsoleCtrl;
 import es.ucm.fdi.tp.basecode.bgame.control.ConsoleCtrlMVC;
@@ -559,9 +559,9 @@ public class Main {
 				nObs = nObstacles;
 			}
 			if (dimRows != null && dimCols != null && dimRows == dimCols) {
-				gameFactory = new AtaxxFactory(dimRows, nObs);
+				gameFactory = new AtaxxFactoryExt(dimRows, nObs);
 			} else {
-				gameFactory = new AtaxxFactory(5, nObs);
+				gameFactory = new AtaxxFactoryExt(5, nObs);
 			}
 			break;
 		default:

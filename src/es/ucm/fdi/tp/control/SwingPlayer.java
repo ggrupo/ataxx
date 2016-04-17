@@ -8,21 +8,28 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameMove;
 import es.ucm.fdi.tp.basecode.bgame.model.GameRules;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-public class SwingPlayer extends Player{
+public class SwingPlayer extends Player {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -257722318128195740L;
-
+	
+	private GameMove move;
+	
+	public SwingPlayer() {}
+	
 	@Override
 	public GameMove requestMove(Piece p, Board board, List<Piece> pieces, GameRules rules) {
-		// TODO Auto-generated method stub
+		if(p.equals(move.getPiece()) {
+			return this.move;
+		}
 		return null;
 	}
 	
-	private void setMove(){
-		
+	public void setMove(GameMove newMove) {
+		this.move = move;
+	}
+	
+	public GameMove getMove() {
+		return this.move;
 	}
 
 }

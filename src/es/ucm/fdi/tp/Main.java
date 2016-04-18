@@ -13,7 +13,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import es.ucm.fdi.tp.ataxx.AtaxxFactoryExt;
-import es.ucm.fdi.tp.basecode.attt.AdvancedTTTFactory;
+import es.ucm.fdi.tp.attt.AdvancedTTTFactoryExt;
 import es.ucm.fdi.tp.basecode.bgame.control.ConsoleCtrl;
 import es.ucm.fdi.tp.basecode.bgame.control.ConsoleCtrlMVC;
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
@@ -23,8 +23,8 @@ import es.ucm.fdi.tp.basecode.bgame.model.AIAlgorithm;
 import es.ucm.fdi.tp.basecode.bgame.model.Game;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.basecode.ttt.TicTacToeFactory;
 import es.ucm.fdi.tp.connectn.ConnectNFactoryExt;
+import es.ucm.fdi.tp.ttt.TicTacToeFactoryExt;
 
 /**
  * This is the class with the main method for the board games application.
@@ -542,7 +542,7 @@ public class Main {
 	
 		switch ( selectedGame ) {
 		case ADVANCED_TIC_TAC_TOE:
-			gameFactory = new AdvancedTTTFactory();
+			gameFactory = new AdvancedTTTFactoryExt();
 			break;
 		case CONNECT_N:
 			if (dimRows != null && dimCols != null && dimRows == dimCols) {
@@ -552,7 +552,7 @@ public class Main {
 			}
 			break;
 		case TIC_TAC_TOE:
-			gameFactory = new TicTacToeFactory();
+			gameFactory = new TicTacToeFactoryExt();
 			break;
 		case ATAXX:
 			if(null != nObstacles) {

@@ -29,7 +29,7 @@ public class AtaxxFactoryExt extends AtaxxFactory {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
     		@Override
 			public void run() {
-    			new AtaxxSwingView(g, c, viewPiece, random, ai).setVisible(true);
+    			new AtaxxSwingView(g, c, viewPiece, random, ai);
 			}
 		});
 		

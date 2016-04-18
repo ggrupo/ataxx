@@ -17,7 +17,7 @@ public class AdvancedTTTFactoryExt extends AdvancedTTTFactory {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
     		@Override
 			public void run() {
-    			new AdvancedTTTSwingView(g, c, viewPiece, random, ai).setVisible(true);
+    			new AdvancedTTTSwingView(g, c, viewPiece, random, ai);
 			}
 		});
 		

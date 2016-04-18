@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,14 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.Utils;
@@ -33,13 +26,13 @@ import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanel;
 
-public abstract class SwingView extends JFrame implements GameObserver, ControlPanelObserver {
+public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	static {
 		setDefaultLookAndFeel();
 	}
-
-	private static final long serialVersionUID = -5822298297801045598L;
+	
+	private final JFrame WINDOW; 
 	
 	private Observable<GameObserver> model;
 	private Controller cntrl;
@@ -87,6 +80,8 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	public SwingView(final Observable<GameObserver> g, Controller c, Piece localPiece, 
 			Player randPlayer, Player aiPlayer)
 	{
+		this.WINDOW = new JFrame();
+		
 		this.cntrl= c;
 		this.randPlayer = randPlayer;
 		this.aiPlayer = aiPlayer;
@@ -98,16 +93,17 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		g.addObserver(SwingView.this);
 		
 		this.setDefaultWindowSize();
-		this.setLocationByPlatform(true);
+		WINDOW.setLocationByPlatform(true);
 		
 		//Exit dialog before closing the windows
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new WindowAdapter() {
+		WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		WINDOW.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				closeGame();
 			}
 		});
+		WINDOW.setVisible(true);
 	}
 	
 	public final Piece getWindowOwner() {
@@ -197,13 +193,13 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		container.add(controlPanel, BorderLayout.LINE_END);
 		model.addObserver(controlPanel);
 
-		this.setContentPane(container);
+		WINDOW.setContentPane(container);
 	}
 	
 	private void initBoard() {
 		if(boardComponent == null) {
 			this.boardComponent = createBoard();
-			getContentPane().add(boardComponent, BorderLayout.CENTER);
+			WINDOW.getContentPane().add(boardComponent, BorderLayout.CENTER);
 		}
 	}
 	
@@ -212,7 +208,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	 */
 	private void closeGame() {
 		if(isPieceTurn(turn) || gameState == State.Stopped) {
-			if((new QuitDialog(SwingView.this)).getValue()) {
+			if((new QuitDialog(WINDOW)).getValue()) {
 				SwingView.this.cntrl.stop();
 			}
 		}
@@ -228,7 +224,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	
 	private void initWindowTitle(String gameDesc) {
 		String owner = WINDOW_OWNER != null ? " (" + WINDOW_OWNER + ")" : "";
-		this.setTitle("Board Games: " + gameDesc + owner);
+		WINDOW.setTitle("Board Games: " + gameDesc + owner);
 	}
 	
 	/**
@@ -280,8 +276,8 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		this.gameState = state;
 		boardComponent.setEnabled(false);
 		if(state == State.Stopped) {
-			this.setVisible(false);
-			this.dispose();
+			WINDOW.setVisible(false);
+			WINDOW.dispose();
 		}
 	}
 	
@@ -331,8 +327,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		this.turn = turn;
 		boardComponent.setEnabled(isPieceTurn(turn));
 		if(turn.equals(WINDOW_OWNER)) {
-			this.requestFocus(true);
-			this.toFront();
+			WINDOW.toFront();
 		}
 		requestAutomaticMove();
 		redrawBoard();
@@ -341,7 +336,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	@Override
 	public void onError(String msg) {
 		if(isPieceTurn(turn)) {
-			new ErrorDialog(msg, this);
+			new ErrorDialog(msg, WINDOW);
 		}
 	}
 	
@@ -362,8 +357,8 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	
 	private void setDefaultWindowSize() {
 		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		this.setSize(screenSize.width/2, screenSize.height*3/4);
-		this.setMinimumSize(new Dimension(screenSize.width/2, screenSize.height/2));
+		WINDOW.setSize(screenSize.width/2, screenSize.height*3/4);
+		WINDOW.setMinimumSize(new Dimension(screenSize.width/2, screenSize.height/2));
 		
 	}
 	
@@ -375,23 +370,6 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	    	System.err.println("Look and feel mode: " + e.getMessage());
 		}
 	}
-
 	
-	@Override
-	public JRootPane createRootPane() {
-		JRootPane rootPane = new JRootPane();
-		KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
-
-		@SuppressWarnings("serial")
-		Action action = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				closeGame();
-			}
-		};
-		InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		inputMap.put(stroke, "ESCAPE");
-		rootPane.getActionMap().put("ESCAPE", action);
-		return rootPane;
-	}
 
 }

@@ -19,8 +19,6 @@ import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.boardpanel.FiniteRectBoardComponent;
 
 public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameObserver {
-
-	private static final long serialVersionUID = -4401832872659565879L;
 	
 	protected static final Color PIECE_BG_COLOR = new Color(153,153,153);
 	protected static final Color PIECE_SHADOW_COLOR = new Color(51,51,51,100);

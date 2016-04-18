@@ -16,7 +16,7 @@ public class ConnectNFactoryExt extends ConnectNFactory {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
     		@Override
 			public void run() {
-    			new ConnectNSwingView(g, c, viewPiece, random, ai).setVisible(true);
+    			new ConnectNSwingView(g, c, viewPiece, random, ai);
 			}
 		});
 		

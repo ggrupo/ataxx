@@ -13,11 +13,8 @@ import es.ucm.fdi.tp.connectn.ConnectNSwingView;
 import es.ucm.fdi.tp.control.SwingPlayer;
 
 public class AdvancedTTTSwingView extends ConnectNSwingView {
-
-	private static final long serialVersionUID = -2594177504068542341L;
 	
-	//private static final String CLICK_ORIGIN = "Click on one of your pieces";
-	private static final String CLICK_DESTINATION = "Click on a destination cell";
+	private static final String CLICKED_DESTINATION_MESSAGE = "Click on a destination cell";
 	
 	private SwingPlayer player;
 	private Piece turn;
@@ -84,7 +81,7 @@ public class AdvancedTTTSwingView extends ConnectNSwingView {
 	
 	protected void showOriginClickedMessage(int i, int j) {
 		showMessage("You've selected (" + i + ", " + j + ") as origin");
-		showMessage(CLICK_DESTINATION);
+		showMessage(CLICKED_DESTINATION_MESSAGE);
 	}
 	
 	public void showDestinationClickedMessage(int i, int j) {

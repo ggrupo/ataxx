@@ -11,8 +11,6 @@ import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
 public abstract class FiniteRectBoardSwingView extends SwingView implements GameObserver {
 
-	private static final long serialVersionUID = 41445079744904350L;
-
 	public FiniteRectBoardSwingView(Observable<GameObserver> g, Controller c, 
 			Piece localPiece, Player randPlayer, Player aiPlayer)
 	{

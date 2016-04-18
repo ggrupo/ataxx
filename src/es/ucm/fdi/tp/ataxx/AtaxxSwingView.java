@@ -19,8 +19,6 @@ import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.boardpanel.FiniteRectBoardComponent;
 
 public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObserver {
-
-	private static final long serialVersionUID = 1836234838652616662L;
 	
 	private static final String CLICKED_ORIGIN_MESSAGE = "Click on one of your pieces";
 	private static final String CLICKED_DESTINATION_MESSAGE = "Click on a destination cell";

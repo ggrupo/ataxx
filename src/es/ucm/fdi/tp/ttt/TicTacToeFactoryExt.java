@@ -6,6 +6,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.basecode.ttt.TicTacToeFactory;
+import es.ucm.fdi.tp.connectn.ConnectNSwingView;
 
 public class TicTacToeFactoryExt extends TicTacToeFactory {
 
@@ -17,7 +18,7 @@ public class TicTacToeFactoryExt extends TicTacToeFactory {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
     		@Override
 			public void run() {
-    			new TicTacToeSwingView(g, c, viewPiece, random, ai).setVisible(true);
+    			new ConnectNSwingView(g, c, viewPiece, random, ai).setVisible(true);
 			}
 		});
 	}

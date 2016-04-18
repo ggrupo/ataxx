@@ -7,7 +7,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
-public class AdvancedTTTFactoryExt extends AdvancedTTTFactory{
+public class AdvancedTTTFactoryExt extends AdvancedTTTFactory {
 	
 	private static final long serialVersionUID = 4664453848203357948L;
 

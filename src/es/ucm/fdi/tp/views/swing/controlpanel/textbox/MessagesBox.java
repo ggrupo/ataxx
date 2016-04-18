@@ -1,5 +1,8 @@
 package es.ucm.fdi.tp.views.swing.controlpanel.textbox;
 
+import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.border.TitledBorder;
 
 public class MessagesBox extends ScrollableTextarea {
@@ -32,6 +35,7 @@ public class MessagesBox extends ScrollableTextarea {
 		this.textarea.setEditable(false);
 		this.textarea.setHighlighter(null);
 		this.setBorder(new TitledBorder("Status Messages"));
+		this.textarea.setFont(new Font("SansSerif", Font.PLAIN, 11));
 	}
 	
 	/**

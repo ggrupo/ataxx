@@ -57,7 +57,7 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 		setButton.addActionListener(this);
 		this.add(setButton);
 		
-		this.setBorder(new TitledBorder("Player modes"));
+		this.setBorder(new TitledBorder("Player Modes"));
 	}
 
 	@Override

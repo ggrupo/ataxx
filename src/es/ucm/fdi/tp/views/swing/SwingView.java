@@ -47,6 +47,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	private final Player aiPlayer;
 	private Board board; //A read only board
 	
+	private State gameState;
 	private Piece turn;
 	private final Piece WINDOW_OWNER;
 	private final Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
@@ -210,7 +211,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	 * Closes the game after asking for confirmation.
 	 */
 	private void closeGame() {
-		if(isPieceTurn(turn)) {
+		if(isPieceTurn(turn) || gameState == State.Stopped) {
 			if((new QuitDialog(SwingView.this)).getValue()) {
 				SwingView.this.cntrl.stop();
 			}
@@ -276,6 +277,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	}
 	
 	private void handleGameOver(Board board, State state, Piece winner) {
+		this.gameState = state;
 		if(state == State.Stopped) {
 			this.setVisible(false);
 			this.dispose();

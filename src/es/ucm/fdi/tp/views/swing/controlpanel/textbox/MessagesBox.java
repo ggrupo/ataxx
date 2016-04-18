@@ -1,6 +1,5 @@
 package es.ucm.fdi.tp.views.swing.controlpanel.textbox;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.border.TitledBorder;

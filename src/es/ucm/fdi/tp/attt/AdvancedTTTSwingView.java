@@ -23,8 +23,8 @@ public class AdvancedTTTSwingView extends ConnectNSwingView {
 	private Piece turn;
 	
 	private boolean clicked = false;
-	private int origRow;
-	private int origCol;
+	private int origRow = -1;
+	private int origCol = -1;
 
 	public AdvancedTTTSwingView(Observable<GameObserver> g, Controller c,
 			Piece localPiece, Player randPlayer, Player aiPlayer) {
@@ -39,21 +39,27 @@ public class AdvancedTTTSwingView extends ConnectNSwingView {
 	
 	@Override
 	protected void handleLeftClick(int i, int j) {
-		if(getBoard().getPieceCount(turn) > 0) {	//Añadir pieza
+		if(getBoard().getPieceCount(turn) > 0) {	//AÃ±adir pieza
 			player.setMove(new AdvancedTTTMove(-1, -1, i, j, turn));
 			requestPlayerMove(player);
 		} else {									//Mover pieza
-			if(clicked) {
-				player.setMove(new AdvancedTTTMove(origRow, origCol, i, j, turn));
-				requestPlayerMove(player);
-				clicked = false;
-				showMessage(getDestinationClickedMessage(i, j));
-			} else {
-				showMessage(getOriginClickedMessage(i, j));
-				clicked = true;
-				origRow = i;
-				origCol = j;
-			}
+			decideMakePieceMove(i, j);
+		}
+	}
+	
+	private void decideMakePieceMove(int destRow, int destCol) {
+		if(clicked) {
+			player.setMove(new AdvancedTTTMove(origRow, origCol, destRow, destCol, turn));
+			requestPlayerMove(player);
+			clicked = false;
+			origRow = -1;
+			origCol = -1;
+			showDestinationClickedMessage(destRow, destCol);
+		} else {
+			clicked = true;
+			origRow = destRow;
+			origCol = destCol;
+			showOriginClickedMessage(destRow, destCol);
 		}
 	}
 	
@@ -76,12 +82,13 @@ public class AdvancedTTTSwingView extends ConnectNSwingView {
 		this.clicked = false;
 	}
 	
-	protected String getOriginClickedMessage(int i, int j) {
-		return "You've selected (" + i + ", " + j + ") as origin\n" + CLICK_DESTINATION;
+	protected void showOriginClickedMessage(int i, int j) {
+		showMessage("You've selected (" + i + ", " + j + ") as origin");
+		showMessage(CLICK_DESTINATION);
 	}
 	
-	public static String getDestinationClickedMessage(int i, int j) {
-		return "You've selected (" + i + ", " + j + ") as destination";
+	public void showDestinationClickedMessage(int i, int j) {
+		showMessage("You've selected (" + i + ", " + j + ") as destination");
 	}
 
 }

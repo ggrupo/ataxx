@@ -9,7 +9,6 @@ import javax.swing.SwingUtilities;
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.control.Player;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
-import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
@@ -23,8 +22,8 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 
 	private static final long serialVersionUID = 1836234838652616662L;
 	
-	private static final String CLICK_ORIGIN = "Click on one of your pieces";
-	private static final String CLICK_DESTINATION = "Click on a destination cell";
+	private static final String CLICKED_ORIGIN_MESSAGE = "Click on one of your pieces";
+	private static final String CLICKED_DESTINATION_MESSAGE = "Click on a destination cell";
 	
 	protected static final Color BG_COLOR = new Color(0,0,102);
 	protected static final Color LINE_COLOR = new Color(120,250,250);
@@ -162,7 +161,7 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 			@Override
 			public void onPlayerModesChange(Piece player, PlayerMode newMode) {
 				if(clicked) {
-					showMessage(getMoveStartMessage());
+					showMoveStartMessage();
 					clicked = false;
 				}
 			}
@@ -193,23 +192,24 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 		return boardComponent;
 	}
 	
-	private void handleLeftClick(int i, int j) {
+	protected void handleLeftClick(int i, int j) {
 		if(clicked) {
-			showMessage(getDestinationClickedMessage(i, j));
+			showDestinationClickedMessage(i, j);
 			player.setMove(new AtaxxMove(origRow, origCol, i, j, turn));
 			requestPlayerMove(player);
 			clicked = false;
 		} else {
-			showMessage(getOriginClickedMessage(i, j));
+			showOriginClickedMessage(i, j);
 			clicked = true;
+			origRow = i;
+			origCol = j;
 		}
-		origRow = i;
-		origCol = j;
+		
 	}
 	
-	private void handleRightClick(int i, int j) {
+	protected void handleRightClick(int i, int j) {
 		if(clicked) {
-			showMessage(getMoveStartMessage());
+			showMoveStartMessage();
 			clicked = false;
 		}
 	}
@@ -243,43 +243,24 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 	}
 	
 	private void handleChangeTurn(Board board, Piece turn) {
-		boardComponent.setEnabled(isPieceTurn(turn));
 		this.turn = turn;
-		redrawBoard();
 		if(getPlayerMode(turn) == PlayerMode.MANUAL) {
-			this.showMessage(getMoveStartMessage());
+			showMoveStartMessage();
 		}
 	}
-	
-	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
-		super.onGameOver(board, state, winner);
-		boardComponent.setEnabled(false);
-	}
-
-	@Override
-	public void onMoveStart(Board board, Piece turn) {
-		super.onMoveStart(board, turn);
-		boardComponent.setEnabled(false);
-	}
-
-	@Override
-	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		super.onMoveEnd(board, turn, success);
-		boardComponent.setEnabled(isPieceTurn(turn));
-	}
 
 	
-	public static String getMoveStartMessage() {
-		return CLICK_ORIGIN;
+	protected void showMoveStartMessage() {
+		showMessage(CLICKED_ORIGIN_MESSAGE);
 	}
 	
-	public static String getOriginClickedMessage(int i, int j) {
-		return "You have selected (" + i + ", " + j + ") as origin. " + CLICK_DESTINATION;
+	protected void showOriginClickedMessage(int i, int j) {
+		showMessage("You've selected (" + i + ", " + j + ") as origin");
+		showMessage(CLICKED_DESTINATION_MESSAGE);
 	}
 	
-	public static String getDestinationClickedMessage(int i, int j) {
-		return "You have selected (" + i + ", " + j + ") as destination";
+	protected void showDestinationClickedMessage(int i, int j) {
+		showMessage("You've selected (" + i + ", " + j + ") as destination");
 		
 	}
 

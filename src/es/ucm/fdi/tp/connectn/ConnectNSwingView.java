@@ -12,7 +12,6 @@ import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.connectn.ConnectNMove;
 import es.ucm.fdi.tp.control.SwingPlayer;
 import es.ucm.fdi.tp.views.swing.FiniteRectBoardSwingView;
@@ -32,8 +31,9 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameO
 	
 	private SwingPlayer player;
 
-	public ConnectNSwingView(Observable<GameObserver> g, Controller c, Piece localPiece, Player randPlayer,
-			Player aiPlayer) {
+	public ConnectNSwingView(Observable<GameObserver> g, Controller c, Piece localPiece, 
+			Player randPlayer, Player aiPlayer) 
+	{
 		super(g, c, localPiece, randPlayer, aiPlayer);
 		this.player = new SwingPlayer();
 	}
@@ -134,25 +134,7 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameO
 	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		handleChangeTurn(board, turn);
 	}
-	
-	@Override
-	public void onGameOver(Board board, State state, Piece winner) {
-		super.onGameOver(board, state, winner);
-		boardComponent.setEnabled(false);
-	}
-	
-	@Override
-	public void onMoveStart(Board board, Piece turn) {
-		super.onMoveStart(board, turn);
-		boardComponent.setEnabled(false);
-	}
 
-	@Override
-	public void onMoveEnd(Board board, Piece turn, boolean success) {
-		super.onMoveEnd(board, turn, success);
-		boardComponent.setEnabled(isPieceTurn(turn));
-	}
-	
 	public void onChangeTurn(final Board board, final Piece turn) {
 		super.onChangeTurn(board, turn);
 		SwingUtilities.invokeLater(new Runnable() {
@@ -165,8 +147,6 @@ public class ConnectNSwingView extends FiniteRectBoardSwingView implements GameO
 	
 	private void handleChangeTurn(Board board, Piece turn) {
 		this.turn = turn;
-		redrawBoard();
-		boardComponent.setEnabled(isPieceTurn(turn));
 		if(getPlayerMode(turn) == PlayerMode.MANUAL)
 			showMessage("Click on a cell");
 	}

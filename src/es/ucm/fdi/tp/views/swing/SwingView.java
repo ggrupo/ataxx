@@ -278,6 +278,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	
 	private void handleGameOver(Board board, State state, Piece winner) {
 		this.gameState = state;
+		boardComponent.setEnabled(false);
 		if(state == State.Stopped) {
 			this.setVisible(false);
 			this.dispose();
@@ -296,7 +297,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	}
 	
 	private void handleMoveStart(Board board, Piece turn) {
-		
+		boardComponent.setEnabled(false);
 	}
 	
 	
@@ -311,6 +312,7 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	}
 	
 	private void handleMoveEnd(Board board, Piece turn, boolean success) {
+		boardComponent.setEnabled(isPieceTurn(turn));
 		redrawBoard();
 	}
 	
@@ -327,11 +329,13 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 	
 	private void handleChangeTurn(Board board, Piece turn) {
 		this.turn = turn;
+		boardComponent.setEnabled(isPieceTurn(turn));
 		if(turn.equals(WINDOW_OWNER)) {
 			this.requestFocus(true);
 			this.toFront();
 		}
 		requestAutomaticMove();
+		redrawBoard();
 	}
 
 	@Override

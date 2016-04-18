@@ -1,41 +1,32 @@
 package es.ucm.fdi.tp.views.swing.boardpanel;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
-import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
-import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.views.swing.SwingView.PlayerMode;
 
-
-public abstract class FiniteRectBoardComponent extends BoardComponent implements GameObserver {
+public abstract class FiniteRectBoardComponent extends BoardComponent {
 
 	private static final long serialVersionUID = 6531989076185688155L;
 	
 	private int rows;
 	private int cols;
 	
-	private int vMargin = 0;
-	private int hMargin = 0;
-
-	private int pieceSize;
+	private int vMargin;
+	private int hMargin;
+	private int marginGap;
 	
-	private final int MARGIN_GAP;
-	
+	private int pieceSize;	
 
-	protected FiniteRectBoardComponent(Map<Piece,Color> colors, Map<Piece,PlayerMode> playerModes) {
-		super(colors, playerModes);
-		this.MARGIN_GAP = getMargin();
+	protected FiniteRectBoardComponent() {
+
 	}
 	
 	@Override
-	public void redraw() {
+	public void redraw(Board board) {
+		this.rows = board.getRows();
+		this.cols = board.getCols();
+		this.marginGap = getMargin();
 		this.repaint();
 	}
 	
@@ -46,8 +37,8 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 			
 			calcMetrics();
 			
-			for(int i=0, y=vMargin; i<rows; i++, y+=pieceSize + MARGIN_GAP) {
-				for(int j=0,x=hMargin; j<cols; j++, x+=pieceSize + MARGIN_GAP) {
+			for(int i=0, y=vMargin; i<rows; i++, y+=pieceSize + marginGap) {
+				for(int j=0,x=hMargin; j<cols; j++, x+=pieceSize + marginGap) {
 					paintPiece(g, i, j, x, y, pieceSize);
 				}
 			}
@@ -69,26 +60,10 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	}
 	
 	private void calcMetrics() {
-		this.pieceSize = Math.min((getWidth()-MARGIN_GAP)/cols, (getHeight()-MARGIN_GAP)/rows) - MARGIN_GAP;
+		this.pieceSize = Math.min((getWidth()-marginGap)/cols, (getHeight()-marginGap)/rows) - marginGap;
 		
-		this.vMargin = (getHeight() - (pieceSize+MARGIN_GAP)*rows - MARGIN_GAP )/2 + MARGIN_GAP;
-		this.hMargin = (getWidth() - (pieceSize+MARGIN_GAP)*cols - MARGIN_GAP )/2 + MARGIN_GAP;
-	}
-	
-	@Override
-	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				handleGameStart(board, gameDesc, pieces, turn);
-			}
-		});
-	}
-	
-	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
-		super.onGameStart(board, gameDesc, pieces, turn);
-		this.rows = board.getRows();
-		this.cols = board.getCols();
+		this.vMargin = (getHeight() - (pieceSize+marginGap)*rows - marginGap )/2 + marginGap;
+		this.hMargin = (getWidth() - (pieceSize+marginGap)*cols - marginGap )/2 + marginGap;
 	}
 
 
@@ -96,7 +71,7 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	protected final void handleRightClick(int x, int y) {
 		Point piece = calculatePieceAt(x, y);
 		if(piece != null)
-			handlePieceRightClick(piece.y, piece.x);
+			onRightClick(piece.y, piece.x);
 	}
 
 
@@ -104,7 +79,7 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	protected final void handleLeftClick(int x, int y) {
 		Point piece = calculatePieceAt(x, y);
 		if(piece != null)
-			handlePieceLeftClick(piece.y, piece.x);
+			onLeftClick(piece.y, piece.x);
 	}
 	
 	/**
@@ -117,8 +92,8 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	protected final Point calculatePieceAt(int x, int y) {
 		if(x >= hMargin && (x < getWidth()-hMargin) &&
 		   y >= vMargin && (y < getHeight()-vMargin)) {
-			int i = (y - vMargin)/(pieceSize+MARGIN_GAP);
-			int j = (x - hMargin)/(pieceSize+MARGIN_GAP);
+			int i = (y - vMargin)/(pieceSize+marginGap);
+			int j = (x - hMargin)/(pieceSize+marginGap);
 			return new Point(j,i);
 		}
 		return null;
@@ -129,14 +104,14 @@ public abstract class FiniteRectBoardComponent extends BoardComponent implements
 	 * @param i - row which was clicked 
 	 * @param j - column which was clicked 
 	 */
-	protected abstract void handlePieceRightClick(int i, int j);
+	protected abstract void onRightClick(int i, int j);
 	
 	/**
 	 * Fires when the board is left-clicked.
 	 * @param i - row which was clicked 
 	 * @param j - column which was clicked 
 	 */
-	protected abstract void handlePieceLeftClick(int i, int j);
+	protected abstract void onLeftClick(int i, int j);
 	
 	/**
 	 * Provides the margin gap between positions in the board.

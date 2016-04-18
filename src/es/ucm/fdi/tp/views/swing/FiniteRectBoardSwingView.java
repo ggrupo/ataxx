@@ -19,5 +19,7 @@ public abstract class FiniteRectBoardSwingView extends SwingView implements Game
 		super(g, c, localPiece, randPlayer, aiPlayer);
 		// TODO Auto-generated constructor stub
 	}
+	
+	protected abstract boolean isPlayerPiece(Piece p);
 
 }

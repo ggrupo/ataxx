@@ -109,57 +109,38 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		});
 	}
 	
-	protected abstract BoardComponent createBoard();
-	
-	protected final void redrawBoard() {
-		this.boardComponent.redraw();
-	}
-	
-	private void initGUI() {
-		JPanel container = new JPanel(new BorderLayout(0,0));
-		
-		this.controlPanel = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
-		container.add(controlPanel, BorderLayout.LINE_END);
-		model.addObserver(controlPanel);
-
-		this.setContentPane(container);
-	}
-	
-	private void initBoard() {
-		if(boardComponent == null) {
-			this.boardComponent = createBoard();
-			getContentPane().add(boardComponent, BorderLayout.CENTER);
-			model.addObserver(boardComponent);
-		}
-	}
-
-	
-	final protected Color getPieceColor(Piece p) { 
-		return pieceColors.get(p); 
-	}
-	
-	final protected Color setPieceColor(Piece p, Color c) { 
-		return pieceColors.put(p,c); 
-	}
-	
-	final protected Map<Piece, Color> getPlayerColors() {
-		return pieceColors;
-	}
-	
-	final protected Map<Piece, PlayerMode> getPlayerModes() {
-		return playerModes;
-	}
-	
-	final protected Board getBoard() {
-		return this.board; 
-	}
-	
 	public final Piece getWindowOwner() {
 		return WINDOW_OWNER;
 	}
 	
-	final public void showMessage(String m) {
+	public final void showMessage(String m) {
 		this.controlPanel.showMessage(m);
+	}
+	
+	public boolean isPieceTurn(Piece p) {
+		return p.equals(WINDOW_OWNER) || WINDOW_OWNER == null;
+	}
+	
+	protected final Color getPieceColor(Piece p) { 
+		return pieceColors.get(p); 
+	}
+	
+	protected final Color setPieceColor(Piece p, Color c) { 
+		return pieceColors.put(p,c); 
+	}
+	
+	protected abstract BoardComponent createBoard();
+	
+	protected final void redrawBoard() {
+		this.boardComponent.redraw(board);
+	}
+	
+	protected final PlayerMode getPlayerMode(Piece p) {
+		return playerModes.get(p);
+	}
+	
+	protected final Board getBoard() {
+		return this.board; 
 	}
 	
 	protected final boolean requestPlayerMove(Player p) {
@@ -208,18 +189,35 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 		this.cntrl.makeMove(aiPlayer);
 	}
 	
+	private void initGUI() {
+		JPanel container = new JPanel(new BorderLayout(0,0));
+		
+		this.controlPanel = new ControlPanel(cntrl,this,playerModes,pieceColors, randPlayer, aiPlayer);
+		container.add(controlPanel, BorderLayout.LINE_END);
+		model.addObserver(controlPanel);
+
+		this.setContentPane(container);
+	}
+	
+	private void initBoard() {
+		if(boardComponent == null) {
+			this.boardComponent = createBoard();
+			getContentPane().add(boardComponent, BorderLayout.CENTER);
+		}
+	}
+	
 	/**
 	 * Closes the game after asking for confirmation.
 	 */
-	public void closeGame() {
-		if(WINDOW_OWNER == null || turn.equals(WINDOW_OWNER)) {
+	private void closeGame() {
+		if(isPieceTurn(turn)) {
 			if((new QuitDialog(SwingView.this)).getValue()) {
 				SwingView.this.cntrl.stop();
 			}
 		}
 	}
 	
-	protected void initDefaultColors(List<Piece> pieces) {
+	private void initDefaultColors(List<Piece> pieces) {
 		for(Piece p : pieces) {
 			if(!pieceColors.containsKey(p)) {
 				pieceColors.put(p, Utils.randomColor());
@@ -336,7 +334,9 @@ public abstract class SwingView extends JFrame implements GameObserver, ControlP
 
 	@Override
 	public void onError(String msg) {
-		new ErrorDialog(msg, this);
+		if(isPieceTurn(turn)) {
+			new ErrorDialog(msg, this);
+		}
 	}
 	
 	

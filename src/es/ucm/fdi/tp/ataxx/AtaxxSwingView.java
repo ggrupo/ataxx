@@ -55,6 +55,9 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 	private List<Piece> pieceList;
 	private Piece turn;
 	
+	/**
+	 * Player used as mcontainer of movements. It is passed to the controller.
+	 */
 	private SwingPlayer player;
 	
 	/**

@@ -36,6 +36,12 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 	private Map<Piece,SwingView.PlayerMode> playerModes;
 	private Board board;
 
+	/**
+	 * builder of class PlayerInfoTable, this class show the information player in the game
+	 * @param playerColors
+	 * @param playerModes
+	 * @param windowOwner
+	 */
 	public PlayersInfoTable(Map<Piece,Color> playerColors, Map<Piece,SwingView.PlayerMode> playerModes, Piece windowOwner) {
 		this.colorMap = playerColors;
 		this.playerModes = playerModes;
@@ -60,7 +66,9 @@ public class PlayersInfoTable extends VScrollPane implements ControlPanelObserve
 		this.add(table);
 		
 	}
-
+/**
+ * refresh data of a information table
+ */
 	public void refreshTable() {
 		tableModel.clear();
 		colors.clear();

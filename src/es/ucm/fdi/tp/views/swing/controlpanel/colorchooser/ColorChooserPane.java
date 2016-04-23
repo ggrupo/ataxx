@@ -22,6 +22,13 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
+/**
+ * A panel containing a list of players and a button. When the button is
+ *  pressed the user is able to choose a new color for the selected player 
+ *  from a modal dialog.
+ * @author german
+ *
+ */
 public class ColorChooserPane extends JPanel implements ActionListener, Observable<ControlPanelObserver>, GameObserver {
 
 	private static final long serialVersionUID = 111272096861569383L;
@@ -36,8 +43,12 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	/**
 	 * List of observers.
 	 */
-	private ArrayList<ControlPanelObserver> observers = new ArrayList<ControlPanelObserver>(4); //should be static?
+	private ArrayList<ControlPanelObserver> observers = new ArrayList<ControlPanelObserver>(4);
 	
+	/**
+	 * Creates a panel to change the players' color.
+	 * @param pieceColors - players' colors.
+	 */
 	public ColorChooserPane(Map<Piece, Color> pieceColors) {
 		this.colorList = pieceColors;
 		
@@ -52,6 +63,10 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 		this.setBorder(new TitledBorder("Piece Colors"));
 	}
 	
+	/**
+	 * Fires when the button is pressed. 
+	 * Launches a dialog to choose a new color.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Piece selected = (Piece) piecesCombo.getSelectedItem();
@@ -67,6 +82,9 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 		
 	}
 	
+	/**
+	 * Enables or disables the button and the list inside the panel.
+	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
@@ -74,6 +92,9 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 		this.piecesCombo.setEnabled(enabled);
 	}
 	
+	/**
+	 * Refresh pieces list (combobox).
+	 */
 	public void refresh() {
 		piecesCombo.removeAllItems();
 		for(Piece p : pieces) {

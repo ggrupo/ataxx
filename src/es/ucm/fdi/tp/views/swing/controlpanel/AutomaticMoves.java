@@ -15,6 +15,13 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 
+/**
+ * A panel that contains two buttons. One to make a random move and another
+ * to make an intelligent move.
+ * 
+ * The buttons are enabled only during the current player's turn (multiviews).
+ *
+ */
 public class AutomaticMoves extends JPanel implements ActionListener, GameObserver {
 
 	private static final long serialVersionUID = 7869356863128774061L;
@@ -28,6 +35,15 @@ public class AutomaticMoves extends JPanel implements ActionListener, GameObserv
 	
 	private final Piece WINDOW_OWNER;
 	
+	/**
+	 * Creates a panel that contains two buttons. One to make a random move 
+	 * and another to make an intelligent move. If aiPlayer or randomPlayer are
+	 * not provided the corresponding button won't be displayed.
+	 * @param c - the game controller
+	 * @param randomPlayer - a Random player or null
+	 * @param aiPlayer - an AI player or null
+	 * @param windowOwner - the window owner (for multiviews).
+	 */
 	public AutomaticMoves(Controller c, Player randomPlayer, Player aiPlayer, Piece windowOwner) {
 		this.cntrl = c;
 		this.WINDOW_OWNER = windowOwner;
@@ -49,6 +65,9 @@ public class AutomaticMoves extends JPanel implements ActionListener, GameObserv
 		this.setBorder(new TitledBorder("Automatic Moves"));
 	}
 	
+	/**
+	 * Fires when any button has been clicked (either random or AI).
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();

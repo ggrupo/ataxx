@@ -76,13 +76,19 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		initGUI();
 	}
 	
+	/**
+	 * show the message
+	 * @param m : text of the message
+	 */
 	public void showMessage(String m) {
 		if(m != null)
 			this.messagesBox.append(m);
 		else
 			this.messagesBox.setText(null);
 	}
-	
+	/**
+	 * build right panel, the control panel, add modules
+	 */
 	private void initGUI() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		

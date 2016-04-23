@@ -45,7 +45,13 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 	 * List of observers.
 	 */
 	private ArrayList<ControlPanelObserver> observers = new ArrayList<ControlPanelObserver>(4);
-
+	
+	/**
+	 * builder class, build the piece list, build mode players, borders and buttons of player modes panel, this class put the mode player chosen.
+	 * @param playerModes
+	 * @param mode
+	 * @param windowOwner
+	 */
 	public PlayerModesPane(Map<Piece,PlayerMode> playerModes, byte mode, final Piece windowOwner) {
 		this.playerModes = playerModes;
 		this.MODE = mode;
@@ -65,7 +71,10 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 		playerModes.put(selectedPlayer, selectedMode);
 		notifyModeChange(selectedPlayer, selectedMode);
 	}
-	
+	/**
+	 * select the piece, the player
+	 * @param windowOwner
+	 */
 	private void buildPieceList(final Piece windowOwner) {
 		if(windowOwner == null) {
 			this.playersCombo = new JComboBox<Piece>();
@@ -83,7 +92,9 @@ public class PlayerModesPane extends JPanel implements ActionListener, GameObser
 			selectedPlayer = windowOwner;
 		}
 	}
-	
+	/**
+	 * build and put the mode player chosen
+	 */
 	private void buildModeList() {
 		if(MODE != MANUAL_ONLY) {
 			this.modesCombo = new JComboBox<PlayerMode>();

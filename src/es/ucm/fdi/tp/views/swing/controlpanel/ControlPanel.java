@@ -278,10 +278,22 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		});
 	}
 	
+	/**
+	 * notifies that the execution of a move has finished for all GameObservers
+	 * @param board
+	 * @param turn
+	 * @param success
+	 */
 	private void handleMoveEnd(Board board, Piece turn, boolean success) {
 		notifyMoveEnd(board, turn, success);
 	}
 	
+	/**
+	 * notifies that the execution of a move has finished for all GameObservers
+	 * @param board
+	 * @param turn
+	 * @param success
+	 */
 	private void notifyMoveEnd(Board board, Piece turn, boolean success) {
 		for(GameObserver o : internalObservers) {
 			o.onMoveEnd(board, turn, success);

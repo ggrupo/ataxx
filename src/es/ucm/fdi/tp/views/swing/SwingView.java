@@ -43,7 +43,9 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	 * It's inside like an attribute instead of inheritance to avoid 
 	 * others who has a reference to close the window.
 	 */
-	private final JFrame WINDOW; 
+	private final JFrame WINDOW;
+	
+	private static byte currentlyOpen = 0;
 	
 	private Observable<GameObserver> model;
 	private Controller cntrl;
@@ -128,7 +130,7 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		g.addObserver(SwingView.this);
 		
 		this.setDefaultWindowSize();
-		WINDOW.setLocationByPlatform(true);
+		this.setDefaultLocation();
 		
 		//Exit dialog before closing the windows
 		WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -139,6 +141,8 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 			}
 		});
 		WINDOW.setVisible(true);
+		
+		SwingView.currentlyOpen++;
 	}
 	
 	/**
@@ -387,6 +391,7 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 			if(state == State.Stopped) {
 				WINDOW.setVisible(false);
 				WINDOW.dispose();
+				SwingView.currentlyOpen--;
 			}
 		}
 	}
@@ -466,13 +471,32 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	/**
 	 * Sets default window size for the window game.
-	 * By default half the screen width and 3/4 the screen height.
+	 * By default half the screen width and 3/5 the screen height.
 	 */
 	private void setDefaultWindowSize() {
 		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		WINDOW.setSize(screenSize.width/2, screenSize.height*3/4);
+		WINDOW.setSize(screenSize.width/2, screenSize.height*3/5);
 		WINDOW.setMinimumSize(new Dimension(screenSize.width/2, screenSize.height/2));
+	}
+	
+	/**
+	 * Sets the default location for the windows.
+	 * Scatters them across the four quadrants on the screen if in multiviews.
+	 */
+	private void setDefaultLocation() {
+		if(SwingView.currentlyOpen > 4) {
+			WINDOW.setLocationByPlatform(true);
+			throw new RuntimeException("Too many views open at the same time.");
+		}
 		
+		if(WINDOW_OWNER == null) {
+			WINDOW.setLocationByPlatform(true);
+		} else {
+			Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			int col = SwingView.currentlyOpen % 2;
+			int row = SwingView.currentlyOpen / 2;
+			WINDOW.setLocation(col*(screenSize.width/2), row*(screenSize.height/2));
+		}
 	}
 	
 	/**

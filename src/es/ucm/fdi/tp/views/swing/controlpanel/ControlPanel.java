@@ -17,7 +17,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.views.swing.SwingView;
-import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChooserPane;
+import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChooserPanel;
 import es.ucm.fdi.tp.views.swing.controlpanel.textbox.MessagesBox;
 
 public final class ControlPanel extends JPanel implements GameObserver {
@@ -50,7 +50,7 @@ public final class ControlPanel extends JPanel implements GameObserver {
 	 * Enables the user to change players' colors.
 	 * Needed to add observers to it on color change.
 	 */
-	private ColorChooserPane colorChooser;
+	private ColorChooserPanel colorChooser;
 	
 	/**
 	 * Enables the user to change players' modes.
@@ -119,7 +119,7 @@ public final class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addColorChangePane() {
-		this.colorChooser = new ColorChooserPane(playerColors);
+		this.colorChooser = new ColorChooserPanel(playerColors);
 		colorChooser.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, colorChooser.getHeight()));
 		this.add(colorChooser);

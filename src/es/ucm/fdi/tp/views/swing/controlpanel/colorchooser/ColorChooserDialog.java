@@ -17,16 +17,38 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-public class ColorChooser extends JDialog {
+/**
+ * A dialog that provides a pane of controls designed to allow a user to 
+ * manipulate and select a color. 
+ */
+public class ColorChooserDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Default tiltle for the dialog.
+	 */
 	final protected static String DEF_TITLE = "Choose a color";
 
 	private Color color;
+	
+	/**
+	 * Launches a color chooser dialog
+	 * @param parent - parent window. If null dialog won't be modal.
+	 * @param initColor - initial color (optional)
+	 */
+	public ColorChooserDialog(Window parent, Color initColor) {
+		this(parent,DEF_TITLE, initColor);
+	}
 
-	public ColorChooser(Window parent, String title, Color initColor) {
-		super(parent, (title != null ? title : DEF_TITLE) );
+	/**
+	 * Launches a color chooser dialog
+	 * @param parent - parent window. If null dialog won't be modal.
+	 * @param title - the dialog's title
+	 * @param initColor - initial color (optional)
+	 */
+	public ColorChooserDialog(Window parent, String title, Color initColor) {
+		super(parent, title);
 		setModalityType(DEFAULT_MODALITY_TYPE);//<-- Stops parent window execution
 		final JColorChooser colorChooser = new JColorChooser(initColor == null ? Color.WHITE : initColor);
 
@@ -64,8 +86,10 @@ public class ColorChooser extends JDialog {
 	}
 	
 	private void centerWindow(Window parent) {
-		setLocationByPlatform(true);
-		setLocationRelativeTo(parent);
+		if(parent != null) 
+			setLocationRelativeTo(parent);
+		else
+			setLocationByPlatform(true);
 	}
 
 	private void closeDialog() {
@@ -92,6 +116,10 @@ public class ColorChooser extends JDialog {
 		return rootPane;
 	}
 
+	/**
+	 * Returns the color chosen by the user.
+	 * @return color choosen.
+	 */
 	public Color getColor() {
 		return color;
 	}

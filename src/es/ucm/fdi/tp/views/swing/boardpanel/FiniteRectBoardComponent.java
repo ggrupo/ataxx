@@ -9,18 +9,29 @@ public abstract class FiniteRectBoardComponent extends BoardComponent {
 
 	private static final long serialVersionUID = 6531989076185688155L;
 	
+	/**
+	 * Number of rows and columns
+	 */
 	private int rows;
 	private int cols;
 	
+	/**
+	 * Margins on top and left sides.
+	 */
 	private int vMargin;
 	private int hMargin;
+	
+	/**
+	 * Margin gap between cells.
+	 */
 	private int marginGap;
 	
 	private int pieceSize;	
 
-	protected FiniteRectBoardComponent() {
-
-	}
+	/**
+	 * Creates an empty finite rect board component
+	 */
+	protected FiniteRectBoardComponent() {}
 	
 	@Override
 	public void redraw(Board board) {
@@ -51,14 +62,26 @@ public abstract class FiniteRectBoardComponent extends BoardComponent {
 		
 	}
 	
+	/**
+	 * Returns the margin on top of the board. 
+	 * It's the same as the bottom margin.
+	 * @return vertical margin
+	 */
 	protected final int getMarginTop() {
 		return this.vMargin;
 	}
 	
+	/**
+	 * Returns the right or left margin, they both are the same.
+	 * @return horizontal margin
+	 */
 	protected final int getMarginLeft() {
 		return this.hMargin;
 	}
 	
+	/**
+	 * Calculates marins and sizes for the board to be drawn correctly.
+	 */
 	private void calcMetrics() {
 		this.pieceSize = Math.min((getWidth()-marginGap)/cols, (getHeight()-marginGap)/rows) - marginGap;
 		
@@ -121,6 +144,7 @@ public abstract class FiniteRectBoardComponent extends BoardComponent {
 	
 	/**
 	 * Paints the piece at the given position in the board.
+	 * Must not paint outside of the given bounds.
 	 * @param g - graphics object used to paint
 	 * @param i - piece's row in the board
 	 * @param j - piece's column in the board

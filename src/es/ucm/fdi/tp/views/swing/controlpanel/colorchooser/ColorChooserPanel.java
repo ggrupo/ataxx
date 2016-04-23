@@ -29,7 +29,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Piece;
  * @author german
  *
  */
-public class ColorChooserPane extends JPanel implements ActionListener, Observable<ControlPanelObserver>, GameObserver {
+public class ColorChooserPanel extends JPanel implements ActionListener, Observable<ControlPanelObserver>, GameObserver {
 
 	private static final long serialVersionUID = 111272096861569383L;
 	
@@ -49,7 +49,7 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	 * Creates a panel to change the players' color.
 	 * @param pieceColors - players' colors.
 	 */
-	public ColorChooserPane(Map<Piece, Color> pieceColors) {
+	public ColorChooserPanel(Map<Piece, Color> pieceColors) {
 		this.colorList = pieceColors;
 		
 		piecesCombo = new JComboBox<Piece>();
@@ -72,7 +72,7 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 		Piece selected = (Piece) piecesCombo.getSelectedItem();
 		Window parent = SwingUtilities.getWindowAncestor(this);
 		
-		ColorChooser chooser = new ColorChooser(parent, "Choose your color", colorList.get(selected));
+		ColorChooserDialog chooser = new ColorChooserDialog(parent, "Choose your color", colorList.get(selected));
 		Color color = chooser.getColor();
 		
 		if (color != null) {

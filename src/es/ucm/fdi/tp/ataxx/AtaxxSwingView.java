@@ -18,14 +18,36 @@ import es.ucm.fdi.tp.views.swing.FiniteRectBoardSwingView;
 import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.boardpanel.FiniteRectBoardComponent;
 
+/**
+ * View class in the MVC for Ataxx game, powered by Java Swing widgets.
+ * Will show a window containing the game divided in two main regions: 
+ * the board and the control panel.<br/>
+ * May be used as a single view for everyone or as a window per player (multiviews).
+ */
 public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObserver {
 	
 	private static final String CLICKED_ORIGIN_MESSAGE = "Click on one of your pieces";
 	private static final String CLICKED_DESTINATION_MESSAGE = "Click on a destination cell";
 	
+	/**
+	 * Board background color.
+	 */
 	protected static final Color BG_COLOR = new Color(0,0,102);
+	
+	/**
+	 * Color of the grid lines and pieces border.
+	 */
 	protected static final Color LINE_COLOR = new Color(120,250,250);
-	protected static final Color LINE_COLOR_MASK = new Color(0,153,255,51);
+	
+	/**
+	 * Color mask applied over piece color. Gives a retro appearance.
+	 */
+	private static final Color LINE_COLOR_MASK = new Color(0,153,255,51);
+	
+	/**
+	 * Border line of a highlighted piece. 
+	 * Pieces are highlighted when it's their turn.
+	 */
 	protected static final Color HIGHLIGHTED_LINE_COLOR = new Color(255,255,255);
 	
 	private FiniteRectBoardComponent boardComponent;
@@ -34,9 +56,18 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 	private Piece turn;
 	
 	private SwingPlayer player;
+	
+	/**
+	 * Status variable. May me used with {@link #origRow} and {@link #origCol}.
+	 * true: already clicked in the past.
+	 * false: not clicked in the past.
+	 */
 	private boolean clicked = false;
-	private int origRow;
-	private int origCol;
+	
+	/**
+	 * Last clicked row and column.
+	 */
+	private int origRow, origCol;
 
 	public AtaxxSwingView(Observable<GameObserver> g, Controller c, Piece localPiece, 
 			Player randPlayer, Player aiPlayer) {
@@ -190,6 +221,11 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 		return boardComponent;
 	}
 	
+	/**
+	 * Handle what happens when a left click occurs on the board.
+	 * @param i - clicked row
+	 * @param j - clicked column
+	 */
 	protected void handleLeftClick(int i, int j) {
 		if(clicked) {
 			showDestinationClickedMessage(i, j);
@@ -205,6 +241,11 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 		
 	}
 	
+	/**
+	 * Handle what happens when a right click occurs on the board.
+	 * @param i - clicked row
+	 * @param j - clicked column
+	 */
 	protected void handleRightClick(int i, int j) {
 		if(clicked) {
 			showMoveStartMessage();
@@ -247,16 +288,28 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 		}
 	}
 
-	
+	/**
+	 * Shows a message when the turn starts.
+	 */
 	protected void showMoveStartMessage() {
 		showMessage(CLICKED_ORIGIN_MESSAGE);
 	}
 	
+	/**
+	 * Shows a message when the origin piece is clicked.
+	 * @param i - clicked row
+	 * @param j - clicked column
+	 */
 	protected void showOriginClickedMessage(int i, int j) {
 		showMessage("You've selected (" + i + ", " + j + ") as origin");
 		showMessage(CLICKED_DESTINATION_MESSAGE);
 	}
 	
+	/**
+	 * Shows a message when a destination cell was clicked.
+	 * @param i - clicked row
+	 * @param j - clicked column
+	 */
 	protected void showDestinationClickedMessage(int i, int j) {
 		showMessage("You've selected (" + i + ", " + j + ") as destination");
 		

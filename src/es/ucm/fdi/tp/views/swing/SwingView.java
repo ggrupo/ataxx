@@ -26,12 +26,23 @@ import es.ucm.fdi.tp.views.swing.boardpanel.BoardComponent;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanel;
 
+/**
+ * View class in the MVC, powered by Java Swing widgets.
+ * Will show a window containing the game divided in two main regions: 
+ * the board and the control panel.<br/>
+ * May be used as a single view for everyone or as a window per player (multiviews).
+ */
 public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	static {
 		setDefaultLookAndFeel();
 	}
 	
+	/**
+	 * The container game window.
+	 * It's inside like an attribute instead of inheritance to avoid 
+	 * others who has a reference to close the window.
+	 */
 	private final JFrame WINDOW; 
 	
 	private Observable<GameObserver> model;
@@ -43,7 +54,17 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	private State gameState;
 	private Piece turn;
 	private final Piece WINDOW_OWNER;
+	
+	/**
+	 * Map of colors, each for one player. 
+	 * Is initialized at {@link #initDefaultColors(List)}.
+	 */
 	private final Map<Piece,Color> pieceColors = new HashMap<Piece,Color>();
+	
+	/**
+	 * Map of players' modes. This view ignores the console options and
+	 * initializes them all to MANUAL in {@link #initPlayers(List)}.
+	 */
 	private final Map<Piece, PlayerMode> playerModes = new HashMap<Piece,PlayerMode>();
 	
 	private ControlPanel controlPanel;
@@ -77,6 +98,20 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		}
 	}
 	
+	/**
+	 * Creates a window which shows the given game. It is also able to send
+	 * responses to the game through the controller.
+	 * 
+	 * Give a value to localPiece if you want one player's perspective or null.
+	 * You also may want to create multiple {@linkplain SwingView} if you have
+	 * multiple players.
+	 * @param g - Game model observable. Needed to recieve game events.
+	 * @param c - Game controller
+	 * @param localPiece - Player which will own this window, null if 
+	 * everyone plays in the same window.
+	 * @param randPlayer - Random player if supported or null.
+	 * @param aiPlayer - AI player if supported or null.
+	 */
 	public SwingView(final Observable<GameObserver> g, Controller c, Piece localPiece, 
 			Player randPlayer, Player aiPlayer)
 	{
@@ -106,10 +141,18 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		WINDOW.setVisible(true);
 	}
 	
+	/**
+	 * Returns a piece which is the window owner.
+	 * @return owner
+	 */
 	public final Piece getWindowOwner() {
 		return WINDOW_OWNER;
 	}
 	
+	/**
+	 * Shows a message in the messages box section.
+	 * @param m - Message to be displayed.
+	 */
 	public final void showMessage(String m) {
 		this.controlPanel.showMessage(m);
 	}
@@ -136,32 +179,70 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		}
 	}
 	
+	/**
+	 * Returns whether is the piece's turn or not. If it is their turn it
+	 * returns true, else it returns false.
+	 * @param p Piece to check the turn with.
+	 * @return whether is the piece's turn or not.
+	 */
 	public boolean isPieceTurn(Piece p) {
 		return p.equals(WINDOW_OWNER) || WINDOW_OWNER == null;
 	}
 	
+	/**
+	 * Returns the color aof the given piece.
+	 * @param p Piece to check the color.
+	 * @return the color of the piece.
+	 */
 	protected final Color getPieceColor(Piece p) { 
 		return pieceColors.get(p); 
 	}
 	
+	/**
+	 * Sets a color for a piece.
+	 * @param p piece whose color will be changed
+	 * @param c color of the piece to be changed
+	 * @return the previous color of the piece or null if it didn't exist
+	 */
 	protected final Color setPieceColor(Piece p, Color c) { 
 		return pieceColors.put(p,c); 
 	}
 	
+	/**
+	 * Builds a full board to be added in the view. It may be called to be
+	 * redrawn or disabled/enabled at any time after this method.
+	 * @return the built board
+	 */
 	protected abstract BoardComponent createBoard();
 	
+	/**
+	 * Redraws the board component. 
+	 */
 	protected final void redrawBoard() {
 		this.boardComponent.redraw(board);
 	}
 	
+	/**
+	 * Returns the player mode for a given player.
+	 * @param p player piece.
+	 * @return the player's gaming mode
+	 */
 	protected final PlayerMode getPlayerMode(Piece p) {
 		return playerModes.get(p);
 	}
 	
+	/**
+	 * Returns a reference to the board.
+	 */
 	protected final Board getBoard() {
 		return this.board; 
 	}
 	
+	/**
+	 * Requests a move to the game for the given player.
+	 * @param p player
+	 * @return true if successfull, false otherwise.
+	 */
 	protected final boolean requestPlayerMove(Player p) {
 		try {
 			cntrl.makeMove(p);
@@ -171,6 +252,11 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		return true;
 	}
 	
+	/**
+	 * Request a random move for the player in the turn. 
+	 * May be random or AI.
+	 * @return whether the move was successful or not
+	 */
 	private boolean requestAutomaticMove() {
 		PlayerMode turnMode = playerModes.get(turn);
 		boolean success = true;
@@ -225,6 +311,10 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		}
 	}
 	
+	/**
+	 * Inits colors for players. Gives them random colors if they have no color.
+	 * @param pieces list of pieces to add a color
+	 */
 	private void initDefaultColors(List<Piece> pieces) {
 		for(Piece p : pieces) {
 			if(!pieceColors.containsKey(p)) {
@@ -233,6 +323,11 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		}
 	}
 	
+	/**
+	 * Sets the window title with the game's description and 
+	 * owner's name (if any).
+	 * @param gameDesc
+	 */
 	private void initWindowTitle(String gameDesc) {
 		String owner = WINDOW_OWNER != null ? " (" + WINDOW_OWNER + ")" : "";
 		WINDOW.setTitle("Board Games: " + gameDesc + owner);
@@ -369,7 +464,10 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		boardComponent.onPlayerModesChange(player, newMode);
 	}
 	
-	
+	/**
+	 * Sets default window size for the window game.
+	 * By default half the screen width and 3/4 the screen height.
+	 */
 	private void setDefaultWindowSize() {
 		Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		WINDOW.setSize(screenSize.width/2, screenSize.height*3/4);
@@ -377,6 +475,9 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		
 	}
 	
+	/**
+	 * Adapts widgets look and feel to system's instead of the default one. 
+	 */
 	private static void setDefaultLookAndFeel() {
 		try {
 			javax.swing.UIManager.setLookAndFeel(

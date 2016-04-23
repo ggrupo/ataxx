@@ -100,7 +100,7 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		WINDOW.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				closeGame();
+				requestCloseGame();
 			}
 		});
 		WINDOW.setVisible(true);
@@ -112,6 +112,28 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	public final void showMessage(String m) {
 		this.controlPanel.showMessage(m);
+	}
+	
+	/**
+	 * Request the player to close the game if it is their turn or
+	 * if the game ended.
+	 */
+	public final void requestCloseGame() {
+		if(gameState != State.InPlay || isPieceTurn(turn)) {
+			if((new QuitDialog(WINDOW)).getValue()) {
+				SwingView.this.cntrl.stop();
+			}
+		}
+	}
+	
+	/**
+	 * Request a game restart. Only possible in the players' turn or
+	 * if the game ended.
+	 */
+	public final void requestRestartGame() {
+		if(isPieceTurn(turn) || gameState != State.InPlay) {
+			cntrl.restart();
+		}
 	}
 	
 	public boolean isPieceTurn(Piece p) {
@@ -203,17 +225,6 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		}
 	}
 	
-	/**
-	 * Closes the game after asking for confirmation.
-	 */
-	private void closeGame() {
-		if(isPieceTurn(turn) || gameState == State.Stopped) {
-			if((new QuitDialog(WINDOW)).getValue()) {
-				SwingView.this.cntrl.stop();
-			}
-		}
-	}
-	
 	private void initDefaultColors(List<Piece> pieces) {
 		for(Piece p : pieces) {
 			if(!pieceColors.containsKey(p)) {
@@ -274,10 +285,14 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	private void handleGameOver(Board board, State state, Piece winner) {
 		this.gameState = state;
-		boardComponent.setEnabled(false);
-		if(state == State.Stopped) {
-			WINDOW.setVisible(false);
-			WINDOW.dispose();
+		try {
+			boardComponent.setEnabled(false);
+			
+		} finally { //Ensure game closes
+			if(state == State.Stopped) {
+				WINDOW.setVisible(false);
+				WINDOW.dispose();
+			}
 		}
 	}
 	

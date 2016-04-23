@@ -20,7 +20,7 @@ import es.ucm.fdi.tp.views.swing.SwingView;
 import es.ucm.fdi.tp.views.swing.controlpanel.colorchooser.ColorChooserPane;
 import es.ucm.fdi.tp.views.swing.controlpanel.textbox.MessagesBox;
 
-public class ControlPanel extends JPanel implements GameObserver {
+public final class ControlPanel extends JPanel implements GameObserver {
 
 	private static final long serialVersionUID = -5012854304785344947L;
 	
@@ -150,7 +150,7 @@ public class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addExitPane() {
-		ExitPanel exit = new ExitPanel(this.cntrl,WINDOW_OWNER);
+		ExitPanel exit = new ExitPanel(this.view);
 		exit.setMaximumSize(
 				new Dimension(Integer.MAX_VALUE, exit.getHeight()));
 		this.add(exit);

@@ -1,21 +1,18 @@
 package es.ucm.fdi.tp.views.swing.controlpanel;
 
 import java.awt.FlowLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
-import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.basecode.bgame.model.Game.State;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
-import es.ucm.fdi.tp.views.swing.QuitDialog;
+import es.ucm.fdi.tp.views.swing.SwingView;
 
 public class ExitPanel extends JPanel implements ActionListener, GameObserver {
 	
@@ -24,8 +21,8 @@ public class ExitPanel extends JPanel implements ActionListener, GameObserver {
 	private JButton exitButton;
 	private JButton restartButton;
 	
-	private Controller cntrl;
-	private final Piece WINDOW_OWNER;
+	private SwingView view;
+	private Piece WINDOW_OWNER;
 	
 	/**
 	 * A panel containg an exit button and a restart button if restartButton
@@ -34,10 +31,10 @@ public class ExitPanel extends JPanel implements ActionListener, GameObserver {
 	 * @param restartOption - designates wether the restart button should be 
 	 * visible or not
 	 */
-	public ExitPanel(Controller c, Piece windowOwner) {
+	public ExitPanel(SwingView v) {
 		super(new FlowLayout());
-		this.cntrl = c;
-		this.WINDOW_OWNER = windowOwner;
+		this.view = v;
+		this.WINDOW_OWNER = v.getWindowOwner();
 		
 		this.exitButton = new JButton(" Quit ");
 		this.exitButton.addActionListener(this);
@@ -54,12 +51,9 @@ public class ExitPanel extends JPanel implements ActionListener, GameObserver {
 	public void actionPerformed(ActionEvent e) {
 		JButton target = (JButton) e.getSource();
 		if(target == this.exitButton) {
-			Window parent = SwingUtilities.getWindowAncestor(this);
-			if(new QuitDialog(parent).getValue()) {
-				cntrl.stop();
-			}
+			view.requestCloseGame();
 		} else if (target == this.restartButton) {
-			cntrl.restart();
+			view.requestRestartGame();
 		}
 	}
 	

@@ -9,20 +9,38 @@ import javax.swing.JPanel;
 import es.ucm.fdi.tp.basecode.bgame.model.Board;
 import es.ucm.fdi.tp.views.swing.controlpanel.ControlPanelObserver;;
 
+/**
+ * A board component where game boards will be painted.
+ *
+ */
 public abstract class BoardComponent extends JPanel implements ControlPanelObserver, MouseListener {
 
 	private static final long serialVersionUID = -7727802925463521690L;
 	
+	/**
+	 * Board's background color.
+	 */
 	public static final Color BG_COLOR = new Color(51,51,51);
 	
+	/**
+	 * Indicates whether the board is enabled or not.
+	 */
 	protected boolean enabled = true;
 	
+	/**
+	 * Creates an empty board.
+	 */
 	protected BoardComponent() {
 		this.setOpaque(true);
 		this.setBackground(BG_COLOR);
 		this.addMouseListener(this);
 	}
 	
+	/**
+	 * Enables or disables the board.
+	 * true stands for enable and false for disable.
+	 * @param b - enable/disable boolean
+	 */
 	@Override
 	public void setEnabled(boolean b) {
 		this.enabled = b;
@@ -42,7 +60,11 @@ public abstract class BoardComponent extends JPanel implements ControlPanelObser
 	 */
 	protected abstract void handleLeftClick(int x, int y);
 	
-	public abstract void redraw(Board b);
+	/**
+	 * Redraws the board.
+	 * @param board - the board raw info
+	 */
+	public abstract void redraw(Board board);
 
 	
 	@Override

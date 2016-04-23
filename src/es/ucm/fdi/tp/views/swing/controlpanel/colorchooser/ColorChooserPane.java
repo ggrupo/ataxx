@@ -27,7 +27,6 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 	private static final long serialVersionUID = 111272096861569383L;
 	
 	protected Map<Piece, Color> colorList;
-	protected final Window parentWindow;
 	
 	private JComboBox<Piece> piecesCombo;
 	private final JButton changeColorBtn;
@@ -51,14 +50,14 @@ public class ColorChooserPane extends JPanel implements ActionListener, Observab
 		
 		
 		this.setBorder(new TitledBorder("Piece Colors"));
-		
-		this.parentWindow = SwingUtilities.getWindowAncestor(this);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Piece selected = (Piece) piecesCombo.getSelectedItem();
-		ColorChooser chooser = new ColorChooser(parentWindow, "Choose your color", colorList.get(selected));
+		Window parent = SwingUtilities.getWindowAncestor(this);
+		
+		ColorChooser chooser = new ColorChooser(parent, "Choose your color", colorList.get(selected));
 		Color color = chooser.getColor();
 		
 		if (color != null) {

@@ -180,7 +180,13 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		
 		notifyGameStart(board, gameDesc, pieces, turn);
 	}
-	
+	/**
+	 * notifies that a game started for all gameObserver
+	 * @param board 
+	 * @param gameDesc
+	 * @param pieces
+	 * @param turn
+	 */
 	private void notifyGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
 		for(GameObserver o : internalObservers) {
 			o.onGameStart(board, gameDesc, pieces, turn);
@@ -198,6 +204,12 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		});
 	}
 	
+	/**
+	 * decided who win, lose or draw
+	 * @param board
+	 * @param state
+	 * @param winner
+	 */
 	private void handleGameOver(Board board, State state, Piece winner) {
 		messagesBox.append("Game over: " + state);
 		if(state == State.Draw) {
@@ -213,6 +225,12 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		notifyGameOver(board, state, winner);
 	}
 	
+	/**
+	 * Notifies that a game has finished(with a winner, draw, or stopped) for gameObserver
+	 * @param board
+	 * @param state
+	 * @param winner
+	 */
 	private void notifyGameOver(Board board, State state, Piece winner) {
 		for(GameObserver o : internalObservers) {
 			o.onGameOver(board, state, winner);
@@ -230,10 +248,19 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		});
 	}
 	
+	/**
+	 * notifies that a move is about to start executing for all GameObservers
+	 * @param board
+	 * @param turn
+	 */
 	private void handleMoveStart(Board board, Piece turn) {
 		notifyMoveStart(board, turn);
 	}
-	
+	/**
+	 * notifies that a move is about to start executing for all GameObservers
+	 * @param board
+	 * @param turn
+	 */
 	private void notifyMoveStart(Board board, Piece turn) {
 		for(GameObserver o : internalObservers) {
 			o.onMoveStart(board, turn);

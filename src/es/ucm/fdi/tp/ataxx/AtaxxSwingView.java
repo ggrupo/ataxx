@@ -286,6 +286,7 @@ public class AtaxxSwingView extends FiniteRectBoardSwingView implements GameObse
 	
 	private void handleChangeTurn(Board board, Piece turn) {
 		this.turn = turn;
+		this.clicked = false;
 		if(getPlayerMode(turn) == PlayerMode.MANUAL) {
 			showMoveStartMessage();
 		}

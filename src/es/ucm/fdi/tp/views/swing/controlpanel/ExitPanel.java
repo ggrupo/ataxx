@@ -27,9 +27,7 @@ public class ExitPanel extends JPanel implements ActionListener, GameObserver {
 	/**
 	 * A panel containg an exit button and a restart button if restartButton
 	 * is true.
-	 * @param c - controller over which actions will be applied
-	 * @param restartOption - designates wether the restart button should be 
-	 * visible or not
+	 * @param v - view containing this exit panel
 	 */
 	public ExitPanel(SwingView v) {
 		super(new FlowLayout());

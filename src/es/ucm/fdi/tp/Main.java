@@ -24,6 +24,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.connectn.ConnectNFactoryExt;
+import es.ucm.fdi.tp.control.multiplayer.GameServer;
 import es.ucm.fdi.tp.ttt.TicTacToeFactoryExt;
 import es.ucm.fdi.tp.basecode.minmax.MinMax;
 
@@ -224,6 +225,11 @@ public class Main {
 	 */
 	final private static AlgorithmForAIPlayer DEFAULT_AIALG = AlgorithmForAIPlayer.NONE;
 
+	/**
+	 * 
+	 */
+	private static int serverPort;
+	
 	/**
 	 * This field includes a game factory that is constructed after parsing the
 	 * command-line arguments. Depending on the game selected with the -g option
@@ -1005,7 +1011,29 @@ public class Main {
 
 		c.start();
 	}
-
+	
+	/**
+	 * 
+	 */
+	private static void startServer(){
+		GameServer c = new GameServer(gameFactory, pieces, serverPort);
+		c.start();
+	}
+	
+	/**
+	 * 
+	 */
+	private static void startClient() {
+		try {
+			 GameClient c = new GameClient(serverHost, serverPort); 
+			 gameFactory = c.getGameFactoty(); 
+			 gameFactory.createSwingView(c, c, c.getPlayerPiece(), …); 
+			 c.start(); } 
+		catch (Exception e) {
+			 System.err.println(…); }
+	}
+	
+	
 	/**
 	 * The main method. It calls {@link #parseArgs(String[])} and then
 	 * {@link #startGame()}.
@@ -1020,7 +1048,17 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		parseArgs(args);
-		startGame();
+		switch(applicationMode){
+		case LOCAL:
+			startGame();
+			break;
+		case SERVER:
+			startServer();
+			break;
+		case CLIENT:
+			startClient();
+			break;
+		}
 	}
 
 }

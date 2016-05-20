@@ -24,8 +24,10 @@ import es.ucm.fdi.tp.basecode.bgame.model.Game;
 import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.connectn.ConnectNFactoryExt;
+import es.ucm.fdi.tp.control.multiplayer.GameClient;
 import es.ucm.fdi.tp.control.multiplayer.GameServer;
 import es.ucm.fdi.tp.ttt.TicTacToeFactoryExt;
+import es.ucm.fdi.tp.views.swing.ServerView;
 import es.ucm.fdi.tp.basecode.minmax.MinMax;
 
 /**
@@ -224,11 +226,16 @@ public class Main {
 	 * Default algorithm for automatic player.
 	 */
 	final private static AlgorithmForAIPlayer DEFAULT_AIALG = AlgorithmForAIPlayer.NONE;
-
+	
 	/**
-	 * 
+	 * Default host name for the server.
 	 */
-	private static int serverPort;
+	final private static String DEFAULT_SERVER_HOST = "localhost";
+	
+	/**
+	 * Default port for the server mode.
+	 */
+	final private static int DEFAULT_SERVER_PORT = 2000;
 	
 	/**
 	 * This field includes a game factory that is constructed after parsing the
@@ -317,6 +324,10 @@ public class Main {
 	 */
 	private static Integer nObstacles;
 	
+	private static int serverPort;
+	
+	private static String serverHost;	
+	
 	/**
 	 * Application mode in that specifies whether the app will run as a server, 
 	 * client or just play in local.
@@ -375,6 +386,8 @@ public class Main {
 																	// --minmax-depth
 		cmdLineOptions.addOption(constructAIAlgOption()); // -aialg ...
 		cmdLineOptions.addOption(constructAppModeOption());
+		cmdLineOptions.addOption(constructServerHostOption());
+		cmdLineOptions.addOption(constructServerPortOption());
 
 		// parse the command line as provided in args
 		//
@@ -391,6 +404,8 @@ public class Main {
 			parseMixMaxDepthOption(line);
 			parseAIAlgOption(line);
 			parseAppModeOption(line);
+			parseServerHostOption(line);
+			parseServerPortOption(line);
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -787,6 +802,35 @@ public class Main {
 	
 	}
 	
+	private static Option constructServerHostOption() {
+		return new Option("sh", "server-host", true,
+				"The host to run the server. ");
+	}
+	
+	private static void parseServerHostOption(CommandLine line) {
+		String host = line.getOptionValue("sh");
+		
+		if(host != null)
+			serverHost = host;
+		else
+			serverHost = DEFAULT_SERVER_HOST;
+	}
+	
+	private static Option constructServerPortOption() {
+		return new Option("sp", "server-port", true,
+				"The connections' port. ");
+	}
+	
+	private static void parseServerPortOption(CommandLine line) {
+		String port = line.getOptionValue("sp");
+		
+		try {
+			serverPort = Integer.parseInt(port);
+		} catch(NumberFormatException e) {
+			serverPort = DEFAULT_SERVER_PORT;
+		}
+	}
+	
 	/**
 	 * Builds the app mode (-am or --app-mode) CLI option.
 	 * @return CLI {@link {@link Option} for the app mode.
@@ -1015,8 +1059,10 @@ public class Main {
 	/**
 	 * 
 	 */
-	private static void startServer(){
+	private static void startServer() {
 		GameServer c = new GameServer(gameFactory, pieces, serverPort);
+		ServerView view = new ServerView(c);
+		c.setView(view);
 		c.start();
 	}
 	
@@ -1026,11 +1072,15 @@ public class Main {
 	private static void startClient() {
 		try {
 			 GameClient c = new GameClient(serverHost, serverPort); 
-			 gameFactory = c.getGameFactoty(); 
-			 gameFactory.createSwingView(c, c, c.getPlayerPiece(), …); 
-			 c.start(); } 
-		catch (Exception e) {
-			 System.err.println(…); }
+			 gameFactory = c.getGameFactoty();
+			 Piece pieces = c.getPlayerPiece();
+			 Player randPlayer = gameFactory.createRandomPlayer();
+			 Player aiPlayer = gameFactory.createAIPlayer(aiPlayerAlg);
+			 gameFactory.createSwingView(c, c, pieces, randPlayer, aiPlayer); 
+			 c.start();
+		} catch (Exception e) {
+			 System.err.println("Unable to launch client: " + e.getMessage()); 
+		}
 	}
 	
 	
@@ -1048,6 +1098,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		parseArgs(args);
+		
 		switch(applicationMode){
 		case LOCAL:
 			startGame();

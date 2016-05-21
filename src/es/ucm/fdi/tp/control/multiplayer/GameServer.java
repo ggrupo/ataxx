@@ -22,6 +22,10 @@ import es.ucm.fdi.tp.control.multiplayer.Responses.*;
 
 public class GameServer extends Controller implements GameObserver {
 	
+	static final String MESSAGE_REQUEST = "Connect";
+	
+	static final String MESSAGE_ACCEPT = "OK";
+	
 	private List<Connection> clients;
 	volatile private ServerSocket server;
 	private int port;
@@ -31,9 +35,8 @@ public class GameServer extends Controller implements GameObserver {
 	volatile private boolean stopped;
 	volatile private boolean gameOver;
 	
-	public static int REQUIRED_PLAYERS = 4;
-	
 	private int nPlayers = 0;
+	
 	private GameFactory gameFactorry;
 	private List<Piece> pieces;
 	
@@ -51,9 +54,14 @@ public class GameServer extends Controller implements GameObserver {
 	
 	private void startClientListener(Connection c) throws IOException {
 		this.gameOver = false;
+		c.sendObject(MESSAGE_ACCEPT);
 		c.sendObject(gameFactorry);
-		c.sendObject(pieces);
+		System.out.println(pieces.size());
+		Piece nPlayer = pieces.get(nPlayers-1);
+		c.sendObject(nPlayer);
+		
 		Thread t = new Thread() {
+			
 			@Override
 			public void run() {
 				while (!stopped && !gameOver) {
@@ -67,15 +75,21 @@ public class GameServer extends Controller implements GameObserver {
 					}
 				}
 			}
+			
 		};
+		
+		view.onPlayerConnected(nPlayer);
 		
 		t.start();
 		
-		view.onPlayerConnected(pieces.get(nPlayers-1));
 	}
 	
 	public int playersConnected() {
 		return nPlayers;
+	}
+	
+	public int requiredPlayers() {
+		return pieces.size();
 	}
 	
 	private void startServer()  {
@@ -92,25 +106,25 @@ public class GameServer extends Controller implements GameObserver {
 			this.stopped = true;
 		}
 		
-		this.stopped = false;
-		
-		while(!this.stopped) {
+		while(!stopped) {
 			try {
 				soc = server.accept();
 				handleRequest(soc);
 				
 			} catch (IOException e) {
-				if(!this.stopped){
+				if(!stopped){
 					view.log("Error while waiting for a connection");
 					System.err.println("Error while waiting for a connection: " + e.getMessage());
 				}
 			}
 		}
+		
 		try {
 			server.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			stop();
 		}
 	}
 	
@@ -119,26 +133,23 @@ public class GameServer extends Controller implements GameObserver {
 			Connection c = new Connection(s);
 			Object clientRequest = c.getObject();
 			
-			if(!(clientRequest instanceof String) &&
-					!((String) clientRequest).equalsIgnoreCase("Connect") ) {
-				c.sendObject(new GameError("Invalid Request"));
+			if(!(clientRequest instanceof String) ||
+					!((String) clientRequest).equalsIgnoreCase(MESSAGE_REQUEST)) {
+				c.sendObject(new GameError("Invalid server request"));
 				c.stop();
 				return;
 			}
-			if(nPlayers >= REQUIRED_PLAYERS) {
+			if(nPlayers >= pieces.size()) {
 				c.sendObject(new GameError("Room is already full"));
 				c.stop();
-				view.log("A client connection was refused: Maximum players connections reached ");
+				view.log("A client connection was refused: Maximum players connections reached. ");
 				return;
 			}
 			
 			nPlayers++;
 			clients.add(c);
-			view.log("new player into to room");
-			c.sendObject("OK");
-			c.sendObject(this.gameFactorry);
-			c.sendObject(this.pieces.get(nPlayers-1));
-			if(nPlayers >= REQUIRED_PLAYERS)
+			
+			if(nPlayers >= pieces.size())
 				startGame();
 			
 			startClientListener(c);
@@ -194,8 +205,8 @@ public class GameServer extends Controller implements GameObserver {
 					c.stop();
 				} catch(IOException e) { e.printStackTrace(); }
 			}
-		this.stop();
 		}
+		
 		view.onServerClosed();
 	}
 	

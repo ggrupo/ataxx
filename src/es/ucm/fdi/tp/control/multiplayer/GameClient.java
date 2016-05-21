@@ -21,7 +21,7 @@ import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.control.multiplayer.Responses.Response;
 
 public class GameClient extends Controller implements Observable<GameObserver>{
-
+	
 	private String host;
 	private int port;
 	private Connection serverConnection;
@@ -80,13 +80,20 @@ public class GameClient extends Controller implements Observable<GameObserver>{
 
 	private void connect() throws Exception {
 		serverConnection = new Connection(new Socket(host, port));
-		serverConnection.sendObject("Connect");
+		serverConnection.sendObject(GameServer.MESSAGE_REQUEST);
 		Object response = serverConnection.getObject();
-		if ((response instanceof Exception) && ((String)response).equalsIgnoreCase("OK")){
+		if ((response instanceof Exception)){
 			throw (Exception) response;
 		}
+		
+		if(!(response instanceof String) ||
+				!((String) response).equalsIgnoreCase(GameServer.MESSAGE_ACCEPT)) {
+			serverConnection.stop();
+			throw new GameError("Server refused connection");
+		}
+		
 		try {
-			 gameFactory = (GameFactory) response;
+			 gameFactory = (GameFactory) serverConnection.getObject();
 			 localPiece = (Piece) serverConnection.getObject();
 		} catch (Exception e) {
 			 throw new GameError("Unknown server response: " + e.getMessage());

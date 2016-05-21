@@ -119,7 +119,7 @@ public class GameServer extends Controller implements GameObserver {
 			Connection c = new Connection(s);
 			Object clientRequest = c.getObject();
 			
-			if(!(clientRequest instanceof String) ||
+			if(!(clientRequest instanceof String) &&
 					!((String) clientRequest).equalsIgnoreCase("Connect") ) {
 				c.sendObject(new GameError("Invalid Request"));
 				c.stop();
@@ -133,6 +133,7 @@ public class GameServer extends Controller implements GameObserver {
 			
 			nPlayers++;
 			clients.add(c);
+			// creo q esto esta mal, a partir de aqui
 			if(nPlayers >= REQUIRED_PLAYERS)
 				startGame();
 			

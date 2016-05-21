@@ -194,7 +194,7 @@ public class GameServer extends Controller implements GameObserver {
 					c.stop();
 				} catch(IOException e) { e.printStackTrace(); }
 			}
-//		this.stop();
+		this.stop();
 		}
 		view.onServerClosed();
 	}

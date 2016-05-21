@@ -13,8 +13,8 @@ public class Connection {
 
 	public Connection(Socket s) throws IOException {
 		this.s = s;
-		this.in = new ObjectInputStream(s.getInputStream());
 		this.out = new ObjectOutputStream(s.getOutputStream());
+		this.in = new ObjectInputStream(s.getInputStream());
 	}
 
 	public void sendObject(Object r) throws IOException {

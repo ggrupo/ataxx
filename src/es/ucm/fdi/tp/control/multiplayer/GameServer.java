@@ -23,13 +23,13 @@ import es.ucm.fdi.tp.control.multiplayer.Responses.*;
 public class GameServer extends Controller implements GameObserver {
 	
 	private List<Connection> clients;
-	private ServerSocket server;
+	volatile private ServerSocket server;
 	private int port;
 	
 	private NetObserver view;
 	
-	private boolean stopped;
-	private boolean gameOver;
+	volatile private boolean stopped;
+	volatile private boolean gameOver;
 	
 	public static int REQUIRED_PLAYERS = 4;
 	
@@ -92,7 +92,7 @@ public class GameServer extends Controller implements GameObserver {
 			this.stopped = true;
 		}
 		
-		this.stopped = false;
+//		this.stopped = false;
 		
 		while(!stopped) {
 			try {
@@ -105,6 +105,12 @@ public class GameServer extends Controller implements GameObserver {
 					System.err.println("Error while waiting for a connection: " + e.getMessage());
 				}
 			}
+		}
+		try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -183,6 +189,7 @@ public class GameServer extends Controller implements GameObserver {
 					c.stop();
 				} catch(IOException e) { e.printStackTrace(); }
 			}
+		this.stop();
 		}
 		view.onServerClosed();
 	}

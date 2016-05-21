@@ -80,14 +80,14 @@ public class ServerView implements NetObserver {
 
 	@Override
 	public void onPlayerConnected(Piece p) {
-		log("Player " + p + "connected (" + 
-				server.playersConnected()  + "/" +GameServer.REQUIRED_PLAYERS + ")" );
+		log("Player " + p + " connected (" + 
+				server.playersConnected()  + "/" + server.requiredPlayers() + ")" );
 	}
 
 	@Override
 	public void onPlayerDisconected(Piece p) {
-		log("Player " + p + "disconnected (" + 
-				server.playersConnected()  + "/" +GameServer.REQUIRED_PLAYERS + ")" );
+		log("Player " + p + " disconnected (" + 
+				server.playersConnected()  + "/" + server.requiredPlayers() + ")" );
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ServerView implements NetObserver {
 		WINDOW.setVisible(true);
 		
 		log("Server started. Waiting for players... (" 
-				+ server.playersConnected()  + "/" +GameServer.REQUIRED_PLAYERS + ")");
+				+ server.playersConnected()  + "/" + server.requiredPlayers() + ")");
 	}
 
 	@Override

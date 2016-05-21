@@ -92,15 +92,15 @@ public class GameServer extends Controller implements GameObserver {
 			this.stopped = true;
 		}
 		
-//		this.stopped = false;
+		this.stopped = false;
 		
-		while(!stopped) {
+		while(!this.stopped) {
 			try {
 				soc = server.accept();
 				handleRequest(soc);
 				
 			} catch (IOException e) {
-				if(!stopped){
+				if(!this.stopped){
 					view.log("Error while waiting for a connection");
 					System.err.println("Error while waiting for a connection: " + e.getMessage());
 				}
@@ -128,14 +128,16 @@ public class GameServer extends Controller implements GameObserver {
 			if(nPlayers >= REQUIRED_PLAYERS) {
 				c.sendObject(new GameError("Room is already full"));
 				c.stop();
+				view.log("A client connection was refused: Maximum players connections reached ");
 				return;
 			}
 			
 			nPlayers++;
 			clients.add(c);
+			view.log("new player into to room");
 			c.sendObject("OK");
-			c.sendObject(gameFactorry);
-			c.sendObject(pieces.get(nPlayers-1));
+			c.sendObject(this.gameFactorry);
+			c.sendObject(this.pieces.get(nPlayers-1));
 			if(nPlayers >= REQUIRED_PLAYERS)
 				startGame();
 			

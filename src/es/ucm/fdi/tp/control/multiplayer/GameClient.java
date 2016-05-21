@@ -82,7 +82,7 @@ public class GameClient extends Controller implements Observable<GameObserver>{
 		serverConnection = new Connection(new Socket(host, port));
 		serverConnection.sendObject("Connect");
 		Object response = serverConnection.getObject();
-		if (response instanceof Exception) {
+		if ((response instanceof Exception) && ((String)response).equalsIgnoreCase("OK")){
 			throw (Exception) response;
 		}
 		try {

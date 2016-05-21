@@ -133,7 +133,9 @@ public class GameServer extends Controller implements GameObserver {
 			
 			nPlayers++;
 			clients.add(c);
-			// creo q esto esta mal, a partir de aqui
+			c.sendObject("OK");
+			c.sendObject(gameFactorry);
+			c.sendObject(pieces.get(nPlayers-1));
 			if(nPlayers >= REQUIRED_PLAYERS)
 				startGame();
 			
@@ -190,7 +192,7 @@ public class GameServer extends Controller implements GameObserver {
 					c.stop();
 				} catch(IOException e) { e.printStackTrace(); }
 			}
-		this.stop();
+//		this.stop();
 		}
 		view.onServerClosed();
 	}

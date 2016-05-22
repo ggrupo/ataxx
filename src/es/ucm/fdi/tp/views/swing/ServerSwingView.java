@@ -15,10 +15,10 @@ import javax.swing.SwingUtilities;
 
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
 import es.ucm.fdi.tp.control.multiplayer.GameServer;
-import es.ucm.fdi.tp.control.multiplayer.NetObserver;
+import es.ucm.fdi.tp.views.ServerView;
 import es.ucm.fdi.tp.views.swing.controlpanel.textbox.MessagesBox;
 
-public class ServerView implements NetObserver {
+public class ServerSwingView implements ServerView {
 	
 	static {
 		setDefaultLookAndFeel();
@@ -29,7 +29,7 @@ public class ServerView implements NetObserver {
 	
 	private GameServer server;
 	
-	public ServerView(GameServer s) {
+	public ServerSwingView(GameServer s) {
 		this.WINDOW = new JFrame();
 		this.server = s;
 		server.setView(this);
@@ -105,6 +105,7 @@ public class ServerView implements NetObserver {
 		WINDOW.dispose();
 	}
 	
+	@Override
 	public void log(String msg) {
 		textarea.append(msg);
 	}

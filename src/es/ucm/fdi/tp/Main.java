@@ -27,7 +27,8 @@ import es.ucm.fdi.tp.connectn.ConnectNFactoryExt;
 import es.ucm.fdi.tp.control.multiplayer.GameClient;
 import es.ucm.fdi.tp.control.multiplayer.GameServer;
 import es.ucm.fdi.tp.ttt.TicTacToeFactoryExt;
-import es.ucm.fdi.tp.views.swing.ServerView;
+import es.ucm.fdi.tp.views.ServerView;
+import es.ucm.fdi.tp.views.swing.ServerSwingView;
 import es.ucm.fdi.tp.basecode.minmax.MinMax;
 
 /**
@@ -1060,9 +1061,20 @@ public class Main {
 	 * 
 	 */
 	private static void startServer() {
+		ServerView v;
 		GameServer c = new GameServer(gameFactory, pieces, serverPort);
-		ServerView view = new ServerView(c);
-		c.setView(view);
+		switch(view) {
+		case WINDOW:
+			v = new ServerSwingView(c);
+			break;
+		case CONSOLE:
+			throw new UnsupportedOperationException(
+					"CLI server view not implemented yet. Launch the server in window mode.");
+		default:
+			throw new UnsupportedOperationException(
+					"Something went wrong! This program point should be unreachable!");
+		}
+		c.setView(v);
 		c.start();
 	}
 	

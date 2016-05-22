@@ -59,7 +59,8 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 
 	@Override
 	public void stop() {
-		forwardCommand(new QuitCommand());
+		if(serverConnection != null)
+			forwardCommand(new QuitCommand());
 	}
 
 	@Override

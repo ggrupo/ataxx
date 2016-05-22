@@ -7,7 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -353,15 +353,21 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	@Override
 	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
 		this.board = board;
+		this.gameState = State.InPlay;
 		initDefaultColors(pieces);
 		initPlayers(pieces);
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				handleGameStart(board, gameDesc, pieces, turn);
-			}
-		});
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					handleGameStart(board, gameDesc, pieces, turn);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
@@ -387,6 +393,8 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		try {
 			boardComponent.setEnabled(false);
 			
+		} catch(Exception e) {
+			
 		} finally { //Ensure game closes
 			if(state == State.Stopped) {
 				WINDOW.setVisible(false);
@@ -408,6 +416,8 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	}
 	
 	private void handleMoveStart(Board board, Piece turn) {
+		this.board = board;
+		this.turn = turn;
 		boardComponent.setEnabled(false);
 	}
 	
@@ -423,6 +433,8 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	}
 	
 	private void handleMoveEnd(Board board, Piece turn, boolean success) {
+		this.board = board;
+		this.turn = turn;
 		boardComponent.setEnabled(isPieceTurn(turn));
 		redrawBoard();
 	}
@@ -440,6 +452,7 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 	
 	private void handleChangeTurn(Board board, Piece turn) {
 		this.turn = turn;
+		this.board = board;
 		boardComponent.setEnabled(isPieceTurn(turn));
 		if(turn.equals(WINDOW_OWNER)) {
 			WINDOW.toFront();

@@ -34,8 +34,7 @@ public class GameServer extends Controller implements GameObserver {
 	
 	volatile private boolean stopped;
 	volatile private boolean gameOver;
-	
-	private int nPlayers = 0;
+
 	
 	private GameFactory gameFactorry;
 	private List<Piece> pieces;
@@ -56,13 +55,12 @@ public class GameServer extends Controller implements GameObserver {
 		this.gameOver = false;
 		c.sendObject(MESSAGE_ACCEPT);
 		c.sendObject(gameFactorry);
-		System.out.println(pieces.size());
-		Piece nPlayer = pieces.get(nPlayers-1);
+		Piece nPlayer = pieces.get(clients.size()-1);
 		c.sendObject(nPlayer);
 		
 		Thread t = new Thread() {
 			
-			@Override
+			@Override 
 			public void run() {
 				while (!stopped && !gameOver) {
 					try {
@@ -73,6 +71,7 @@ public class GameServer extends Controller implements GameObserver {
 							GameServer.this.stop();
 						}
 					}
+					
 				}
 			}
 			
@@ -85,7 +84,7 @@ public class GameServer extends Controller implements GameObserver {
 	}
 	
 	public int playersConnected() {
-		return nPlayers;
+		return clients.size();
 	}
 	
 	public int requiredPlayers() {
@@ -93,39 +92,43 @@ public class GameServer extends Controller implements GameObserver {
 	}
 	
 	private void startServer()  {
-		Socket soc;
+		
 		try {
-			this.server = new ServerSocket(port);
+			server = new ServerSocket(port);
 			view.onServerOpened(game.gameDesc());
-			this.stopped = false;
+			stopped = false;
 			
 		} catch (IOException e) {
-			view.log("Error opening the server");
 			System.err.println("Error opening the server: " + e.getMessage());
-			view.onServerClosed();
-			this.stopped = true;
+			stopServer();
 		}
 		
-		while(!stopped) {
-			try {
-				soc = server.accept();
-				handleRequest(soc);
+		Thread t = new Thread() {
+			
+			@Override
+			public void run() {
+				Socket soc;
 				
-			} catch (IOException e) {
-				if(!stopped){
-					view.log("Error while waiting for a connection");
-					System.err.println("Error while waiting for a connection: " + e.getMessage());
+				while(!stopped) {
+					try {
+						soc = server.accept();
+						handleRequest(soc);
+						
+					} catch (IOException e) {
+						if(!stopped){
+							view.log("Error while waiting for a connection");
+							System.err.println("Error while waiting for a connection: " + e.getMessage());
+						}
+					}
 				}
+				
+				stopServer();
 			}
-		}
+		};
 		
-		try {
-			server.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			stop();
-		}
+		t.start();
+		
+		
 	}
 	
 	private void handleRequest(Socket s) {
@@ -139,31 +142,34 @@ public class GameServer extends Controller implements GameObserver {
 				c.stop();
 				return;
 			}
-			if(nPlayers >= pieces.size()) {
+			if(clients.size() >= pieces.size()) {
 				c.sendObject(new GameError("Room is already full"));
 				c.stop();
 				view.log("A client connection was refused: Maximum players connections reached. ");
 				return;
 			}
 			
-			nPlayers++;
 			clients.add(c);
-			
-			if(nPlayers >= pieces.size())
-				startGame();
 			
 			startClientListener(c);
 			
+			if(clients.size() == pieces.size())
+				startGame();
+			
+			
 		} catch (IOException | ClassNotFoundException e) {
+			try {
+				s.close();
+			} catch (IOException e1) {}
 			e.printStackTrace();
 		}
 	}
 	
 	private void startGame() {
 		if(game.getState() == State.Starting)
-			game.start(pieces);
+			super.start();
 		else
-			game.restart();
+			restart();
 	}
 	
 	public void setView(@NotNull NetObserver o) {
@@ -194,29 +200,44 @@ public class GameServer extends Controller implements GameObserver {
 			this.gameOver = true;
 			super.stop();
 			
-		} catch (GameError e) {
-			view.log(e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
 			
-		} finally {
-			for(Connection c : clients) {
-				try {
-					c.stop();
-				} catch(IOException e) { e.printStackTrace(); }
-			}
 		}
 		
-		view.onServerClosed();
+		for(Connection c : clients) {
+			try {
+				c.stop();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		clients.clear();
 	}
 	
 	@Override
 	public void start() {
-		if(view != null)
-			startServer();
-		else
+		if(view == null)
 			throw new NullPointerException(
 					"Uninitialized view. You must call setView() first.");
+		if(server != null)
+			throw new RuntimeException("Server already started");
+		
+		startServer();
+			
+	}
+	
+	public void stopServer() {
+		this.stopped = true;
+		
+		try {
+			stop();
+			server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			view.onServerClosed();
+		}
 	}
 	
 	//Done
@@ -225,7 +246,8 @@ public class GameServer extends Controller implements GameObserver {
 			try {
 				c.sendObject(r);
 			} catch (IOException e) {
-				clients.remove(c);
+				//TODO -> cool recursion idea here
+				e.printStackTrace();
 			}
 		}
 	}

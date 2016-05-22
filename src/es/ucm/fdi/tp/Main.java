@@ -1073,10 +1073,10 @@ public class Main {
 		try {
 			 GameClient c = new GameClient(serverHost, serverPort); 
 			 gameFactory = c.getGameFactoty();
-			 Piece pieces = c.getPlayerPiece();
+			 Piece piece = c.getPlayerPiece();
 			 Player randPlayer = gameFactory.createRandomPlayer();
 			 Player aiPlayer = gameFactory.createAIPlayer(aiPlayerAlg);
-			 gameFactory.createSwingView(c, c, pieces, randPlayer, aiPlayer); 
+			 gameFactory.createSwingView(c, c, piece, randPlayer, aiPlayer); 
 			 c.start();
 		} catch (Exception e) {
 			 System.err.println("Unable to launch client: " + e.getMessage()); 

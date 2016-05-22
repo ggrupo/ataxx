@@ -22,8 +22,8 @@ import es.ucm.fdi.tp.control.multiplayer.Responses.Response;
 
 public class GameClient extends Controller implements Observable<GameObserver>{
 	
-	private String host;
-	private int port;
+	private final String host;
+	private final int port;
 	private Connection serverConnection;
 	
 	private List<GameObserver> observers;
@@ -31,7 +31,7 @@ public class GameClient extends Controller implements Observable<GameObserver>{
 	private Piece localPiece;
 	private GameFactory gameFactory;
 	
-	private boolean gameOver;
+	volatile private boolean gameOver;
 
 	public GameClient(String hostname, int port) throws Exception {
 		super(null, null); //The client has no model
@@ -100,21 +100,31 @@ public class GameClient extends Controller implements Observable<GameObserver>{
 		}
 	}
 
+	@Override
 	public void start() {
 		addCloseClientConnectionObserver();
 		
 		this.gameOver = false;
 		
-		while(!gameOver) {
-			try {
-				Response r = (Response) serverConnection.getObject();
-				for(GameObserver o : observers) {
-					r.run(o);
+		Thread t = new Thread() {
+			
+			@Override
+			public void run() {
+				while(!gameOver) {
+					try {
+						Response r = (Response) serverConnection.getObject();
+						for(GameObserver o : observers) {
+							r.run(o);
+						}
+					} catch(ClassNotFoundException | IOException e) {
+						
+					}
 				}
-			} catch(ClassNotFoundException | IOException e) {
-				
 			}
-		}
+			
+		};
+		
+		t.start();
 
 	}
 	

@@ -1,5 +1,7 @@
 package es.ucm.fdi.tp.attt;
 
+import java.lang.reflect.InvocationTargetException;
+
 import es.ucm.fdi.tp.basecode.attt.AdvancedTTTFactory;
 import es.ucm.fdi.tp.basecode.bgame.control.Controller;
 import es.ucm.fdi.tp.basecode.bgame.control.Player;
@@ -14,12 +16,17 @@ public class AdvancedTTTFactoryExt extends AdvancedTTTFactory {
 	public void createSwingView(final Observable<GameObserver> g, final Controller c, final Piece viewPiece,
 			final Player random, final Player ai) {
 		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-    		@Override
-			public void run() {
-    			new AdvancedTTTSwingView(g, c, viewPiece, random, ai);
-			}
-		});
+		try {
+			javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					new AdvancedTTTSwingView(g, c, viewPiece, random, ai);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

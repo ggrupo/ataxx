@@ -135,12 +135,14 @@ public class GameClient extends Controller implements Observable<GameObserver> {
 			
 			@Override
 			public void onGameOver(Board board, State state, Piece winner) {
-				GameClient.this.gameOver = true;
-				try {
-					GameClient.this.serverConnection.stop();
-					GameClient.this.serverConnection = null;
-				} catch (IOException e) {
-					e.printStackTrace();
+				if(state == State.Stopped) {
+					try {
+						GameClient.this.gameOver = true;
+						GameClient.this.serverConnection.stop();
+						GameClient.this.serverConnection = null;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});

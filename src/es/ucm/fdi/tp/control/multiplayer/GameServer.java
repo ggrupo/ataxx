@@ -196,24 +196,27 @@ public class GameServer extends Controller implements GameObserver {
 	
 	@Override
 	public synchronized void stop() {
+		
 		try {
-			this.gameOver = true;
-			super.stop();
-			
+			game.stop();
 		} catch(Exception e) {
 			e.printStackTrace();
 			
 		}
 		
-		for(Connection c : clients) {
-			try {
-				c.stop();
-			} catch (IOException e) {
-				e.printStackTrace();
+		if(game.getState() == State.Stopped) {
+			this.gameOver = true;
+			
+			for(Connection c : clients) {
+				try {
+					c.stop();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			clients.clear();
+			view.onGameStopped();
 		}
-		clients.clear();
-		view.onGameStopped();
 	}
 	
 	public synchronized void stopServer() {

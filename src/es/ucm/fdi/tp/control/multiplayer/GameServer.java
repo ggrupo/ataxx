@@ -26,18 +26,18 @@ public class GameServer extends Controller implements GameObserver {
 	
 	static final String MESSAGE_ACCEPT = "OK";
 	
-	private List<Connection> clients;
-	volatile private ServerSocket server;
-	private int port;
+	private volatile List<Connection> clients;
+	private volatile ServerSocket server;
+	private final int port;
 	
 	private NetObserver view;
 	
-	volatile private boolean stopped;
-	volatile private boolean gameOver;
+	private volatile boolean stopped;
+	private volatile boolean gameOver;
 
 	
-	private GameFactory gameFactorry;
-	private List<Piece> pieces;
+	private final GameFactory gameFactorry;
+	private final List<Piece> pieces;
 	
 	public GameServer(GameFactory factory, List<Piece> pieces, int port) {
 		super(new Game(factory.gameRules()), pieces);
@@ -83,7 +83,7 @@ public class GameServer extends Controller implements GameObserver {
 		
 	}
 	
-	public int playersConnected() {
+	public synchronized int playersConnected() {
 		return clients.size();
 	}
 	
@@ -131,7 +131,7 @@ public class GameServer extends Controller implements GameObserver {
 		
 	}
 	
-	private void handleRequest(Socket s) {
+	private synchronized void handleRequest(Socket s) {
 		try {
 			Connection c = new Connection(s);
 			Object clientRequest = c.getObject();
@@ -213,21 +213,10 @@ public class GameServer extends Controller implements GameObserver {
 			}
 		}
 		clients.clear();
+		view.onGameStopped();
 	}
 	
-	@Override
-	public void start() {
-		if(view == null)
-			throw new NullPointerException(
-					"Uninitialized view. You must call setView() first.");
-		if(server != null)
-			throw new RuntimeException("Server already started");
-		
-		startServer();
-			
-	}
-	
-	public void stopServer() {
+	public synchronized void stopServer() {
 		this.stopped = true;
 		
 		try {
@@ -238,6 +227,18 @@ public class GameServer extends Controller implements GameObserver {
 		} finally {
 			view.onServerClosed();
 		}
+	}
+	
+	@Override
+	public synchronized  void start() {
+		if(view == null)
+			throw new NullPointerException(
+					"Uninitialized view. You must call setView() first.");
+		if(server != null)
+			throw new RuntimeException("Server already started");
+		
+		startServer();
+			
 	}
 	
 	//Done

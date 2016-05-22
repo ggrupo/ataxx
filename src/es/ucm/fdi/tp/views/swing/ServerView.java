@@ -85,8 +85,8 @@ public class ServerView implements NetObserver {
 	}
 
 	@Override
-	public void onPlayerDisconected(Piece p) {
-		log("Player " + p + " disconnected (" + 
+	public void onGameStopped() {
+		log("Game has been stopped. Waiting for players... (" + 
 				server.playersConnected()  + "/" + server.requiredPlayers() + ")" );
 	}
 
@@ -110,10 +110,8 @@ public class ServerView implements NetObserver {
 	}
 	
 	private void confirmAndExit() {
-		if((new QuitDialog(WINDOW)).getValue()){
+		if((new QuitDialog(WINDOW)).getValue())
 			server.stopServer();
-			onServerClosed();
-		}
 	}
 	
 	private static void setDefaultLookAndFeel() {

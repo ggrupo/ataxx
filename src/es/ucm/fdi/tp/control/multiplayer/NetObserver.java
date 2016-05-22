@@ -6,7 +6,7 @@ public interface NetObserver {
 	
 	public void onPlayerConnected(Piece p);
 	
-	public void onPlayerDisconected(Piece p);
+	public void onGameStopped();
 	
 	public void onServerOpened(String gameDesc);
 	

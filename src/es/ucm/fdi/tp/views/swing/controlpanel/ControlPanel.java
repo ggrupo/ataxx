@@ -57,6 +57,8 @@ public final class ControlPanel extends JPanel implements GameObserver {
 	 * Needed to add observers to it on mode change.
 	 */
 	private PlayerModesPane playerModesPanel;
+	
+	private AutomaticMoves autoMovesPane;
 
 	private LinkedList<GameObserver> internalObservers = new LinkedList<GameObserver>();
 	
@@ -103,6 +105,10 @@ public final class ControlPanel extends JPanel implements GameObserver {
 		colorChooser.addObserver(this.view);
 		playerModesPanel.addObserver(this.infoTable);
 		playerModesPanel.addObserver(this.view);
+		
+		colorChooser.setEnabled(false);
+		playerModesPanel.setEnabled(false);
+		autoMovesPane.setEnabled(false);
 	}
 	
 	private void addMessagesBox() {
@@ -146,12 +152,13 @@ public final class ControlPanel extends JPanel implements GameObserver {
 	}
 	
 	private void addAutoMovesPane() {
-		AutomaticMoves autoMovesPane = new AutomaticMoves(cntrl, randPlayer, aiPlayer, WINDOW_OWNER);
+		this.autoMovesPane = new AutomaticMoves(cntrl, randPlayer, aiPlayer, WINDOW_OWNER);
 		if(randPlayer != null || aiPlayer != null) {
-			autoMovesPane.setMaximumSize(
-				new Dimension(Integer.MAX_VALUE, autoMovesPane.getHeight()));
-			this.add(autoMovesPane);
-			this.internalObservers.add(autoMovesPane);
+			this.autoMovesPane.setMaximumSize(
+				new Dimension(Integer.MAX_VALUE, this.autoMovesPane.getHeight()));
+			this.add(this.autoMovesPane);
+			this.internalObservers.add(this.autoMovesPane);
+			
 		}
 	}
 	
@@ -166,6 +173,11 @@ public final class ControlPanel extends JPanel implements GameObserver {
 	
 	@Override
 	public void onGameStart(final Board board, final String gameDesc, final List<Piece> pieces, final Piece turn) {
+		
+		colorChooser.setEnabled(true);
+		playerModesPanel.setEnabled(true);
+		autoMovesPane.setEnabled(true);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

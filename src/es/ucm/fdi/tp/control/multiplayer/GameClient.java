@@ -18,9 +18,10 @@ import es.ucm.fdi.tp.basecode.bgame.model.GameError;
 import es.ucm.fdi.tp.basecode.bgame.model.GameObserver;
 import es.ucm.fdi.tp.basecode.bgame.model.Observable;
 import es.ucm.fdi.tp.basecode.bgame.model.Piece;
+import es.ucm.fdi.tp.control.GameAdapter;
 import es.ucm.fdi.tp.control.multiplayer.Responses.Response;
 
-public class GameClient extends Controller implements Observable<GameObserver>{
+public class GameClient extends Controller implements Observable<GameObserver> {
 	
 	private final String host;
 	private final int port;
@@ -129,33 +130,18 @@ public class GameClient extends Controller implements Observable<GameObserver>{
 	}
 	
 	private void addCloseClientConnectionObserver() {
-		this.observers.add(new GameObserver() {
+		this.observers.add(new GameAdapter() {
 			
 			@Override
 			public void onGameOver(Board board, State state, Piece winner) {
 				GameClient.this.gameOver = true;
 				try {
 					GameClient.this.serverConnection.stop();
+					GameClient.this.serverConnection = null;
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-
-			@Override
-			public void onGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {}
-
-			@Override
-			public void onMoveStart(Board board, Piece turn) {}
-
-			@Override
-			public void onMoveEnd(Board board, Piece turn, boolean success) {}
-
-			@Override
-			public void onChangeTurn(Board board, Piece turn) {}
-
-			@Override
-			public void onError(String msg) {}
-			
 		});
 	}
 	

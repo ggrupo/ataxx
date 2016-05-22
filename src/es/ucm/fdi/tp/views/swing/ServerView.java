@@ -110,8 +110,10 @@ public class ServerView implements NetObserver {
 	}
 	
 	private void confirmAndExit() {
-		if((new QuitDialog(WINDOW)).getValue())
-			server.stop();
+		if((new QuitDialog(WINDOW)).getValue()){
+			server.stopServer();
+			onServerClosed();
+		}
 	}
 	
 	private static void setDefaultLookAndFeel() {

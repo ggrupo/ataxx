@@ -357,17 +357,12 @@ public abstract class SwingView implements GameObserver, ControlPanelObserver {
 		initDefaultColors(pieces);
 		initPlayers(pieces);
 		
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				@Override
-				public void run() {
-					handleGameStart(board, gameDesc, pieces, turn);
-				}
-			});
-		} catch (InvocationTargetException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				handleGameStart(board, gameDesc, pieces, turn);
+			}
+		});
 	}
 	
 	private void handleGameStart(Board board, String gameDesc, List<Piece> pieces, Piece turn) {
